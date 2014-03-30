@@ -98,7 +98,11 @@ public class EAClientProxy extends EACommonProxy implements ITickHandler {
 
 	@Override
 	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-
+		if (type.contains(TickType.RENDER)) {
+			Minecraft mc = Minecraft.getMinecraft();
+			if (mc != null && mc.thePlayer != null)
+				ClientEnergyHUD.doRenderHUD(mc.thePlayer, mc.theWorld, mc);
+		}
 	}
 
 	@Override

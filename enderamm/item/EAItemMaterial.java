@@ -42,6 +42,8 @@ public class EAItemMaterial extends Item {
 		addItem("dustEndopherum", "Endopherum Dust");
 		addItem("ingotEndopherum", "Endopherum Ingot");
 		addItem("lensPyrotheum", "Pyrotheum Lens");
+		addItem("rfKineticPreprocessor", "Flux-Kinesis Preprocessor");
+		
 	}
 
 	public static void addItem(String name, String localizedName) {

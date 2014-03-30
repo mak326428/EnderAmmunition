@@ -258,10 +258,15 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 		if (!world.isRemote) {
 			if (!stack.getTagCompound().getBoolean(SAFETY_CATCH_NBT)) {
 				List<Location> lst = Lists.newArrayList();
+				int blockID = world.getBlockId(x, y, z);
+				int meta = world.getBlockMetadata(x, y, z);
 				for (int xC = x - 3; xC <= x + 3; xC++) {
 					for (int yC = y - 3; yC <= y + 3; yC++) {
 						for (int zC = z - 3; zC <= z + 3; zC++) {
-							lst.add(new Location(xC, yC, zC));
+							int cID = world.getBlockId(xC, yC, zC);
+							int cMeta = world.getBlockMetadata(xC, yC, zC);
+							if (cID == blockID && cMeta == meta)
+								lst.add(new Location(xC, yC, zC));
 						}
 					}
 				}
@@ -270,6 +275,12 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 		}
 		return true;
 	}
+	
+	@Override
+    public int getItemEnchantability()
+    {
+        return 0;
+    }
 
 	public int getMaxDamage(ItemStack stack) {
 		return MAX_STORAGE + 1;

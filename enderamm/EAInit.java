@@ -6,29 +6,32 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thermalexpansion.block.TEBlocks;
 import thermalexpansion.fluid.TEFluids;
+import thermalexpansion.item.ItemTEBase;
 import thermalexpansion.item.TEItems;
 import thermalexpansion.util.crafting.SmelterManager;
 import thermalexpansion.util.crafting.TransposerManager;
 import cpw.mods.fml.common.registry.GameRegistry;
 import enderamm.item.ItemAnnihilationManipulator;
-import enderamm.item.ItemWarpGem;
 
 public class EAInit {
 	public static void addRecipes() {
+		// Enderium Blend -> Endopherum Dust
 		TransposerManager.addFillRecipe(20000, TEItems.dustEnderium.copy(),
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 0),
 				new FluidStack(TEFluids.fluidPyrotheum, 2000), false);
+		// Glass -> Pyrotheum Lens
 		TransposerManager.addFillRecipe(40000, new ItemStack(Block.glass),
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 2),
 				new FluidStack(TEFluids.fluidPyrotheum, 8000), false);
-		ItemStack endopherumStaff = new ItemStack(
+		// 16 Endopherum Dust -> Endopherum Ingot
+		ItemStack endopherumDusts = new ItemStack(
 				EACommonProxy.itemMaterial.itemID, 16, 0);
 		SmelterManager.addRecipe(40000, TEItems.dustPyrotheum.copy(),
-				endopherumStaff, new ItemStack(
+				endopherumDusts, new ItemStack(
 						EACommonProxy.itemMaterial.itemID, 1, 1));
+		// Armor Recipes
 		ItemStack energyCapacitor = new ItemStack(TEItems.itemCapacitor, 1, 5);
 		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
 				EACommonProxy.itemArmorEnderChestplate), "#C#", "###", "###",
@@ -50,6 +53,7 @@ public class EAInit {
 		// GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
 		// EACommonProxy.itemMaterial.itemID, 1, 3), " # ", " # ", '#',
 		// new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1)));
+		// Warp Gem recipe
 		GameRegistry.addRecipe(new ShapelessRFRecipe(new ItemStack(
 				EACommonProxy.itemWarpGem), new ItemStack(
 				EACommonProxy.itemWarpGem, 1, OreDictionary.WILDCARD_VALUE)));
@@ -58,11 +62,18 @@ public class EAInit {
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1), 'E',
 				new ItemStack(Item.enderPearl), 'R', new ItemStack(
 						TEBlocks.blockEnergyCell, 1, 4)));
+		// Annihilation Manipulator Recipe
 		GameRegistry.addRecipe(new ShapedRFRecipe(ItemAnnihilationManipulator
 				.getAnnihilationManipulator(0), "LLL", "IWI", "IRI", 'L',
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 2), 'W',
 				new ItemStack(EACommonProxy.itemWarpGem), 'I', new ItemStack(
 						EACommonProxy.itemMaterial.itemID, 1, 1), 'R',
 				energyCapacitor));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				EACommonProxy.itemMaterial.itemID, 1, 3), "ETE", "COC", "ERE",
+				'O', TEBlocks.blockTesseract, 'R', TEItems.itemComponent, 'T',
+				TEItems.itemComponent, 'E', new ItemStack(
+						EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
+				TEItems.itemComponent));
 	}
 }

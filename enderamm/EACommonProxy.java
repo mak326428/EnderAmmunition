@@ -12,6 +12,7 @@ import enderamm.item.EAFlightHandler;
 import enderamm.item.EAItemMaterial;
 import enderamm.item.ItemAnnihilationManipulator;
 import enderamm.item.ItemArmorEnderBase;
+import enderamm.item.ItemHealingGem;
 import enderamm.item.ItemWarpGem;
 
 public class EACommonProxy {
@@ -24,6 +25,8 @@ public class EACommonProxy {
 	public static int essenceID;
 	public static int itemWarpGemID;
 	public static int annihilationManipulatorID;
+	public static int healingGemID;
+	
 	
 	public static ItemArmorEnderBase itemArmorEnderBoots;
 	public static ItemArmorEnderBase itemArmorEnderLeggings;
@@ -32,6 +35,7 @@ public class EACommonProxy {
 	public static ItemWarpGem itemWarpGem;
 	public static EAItemMaterial itemMaterial;
 	public static ItemAnnihilationManipulator itemAnnihilationManipulator;
+	public static ItemHealingGem itemHealingGem;
 	
 	public void preInit(Configuration config) {
 		enderBootsID = config.getItem("itemArmorEnderBoots", 24564).getInt();
@@ -41,6 +45,7 @@ public class EACommonProxy {
 		materialID = config.getItem("itemMaterial", 24569).getInt();
 		itemWarpGemID = config.getItem("itemWarpGem", 24570).getInt();
 		annihilationManipulatorID = config.getItem("itemAnnihilationManipulator", 24571).getInt();
+		healingGemID = config.getItem("itemHealingGem", 24572).getInt();
 		MinecraftForge.EVENT_BUS.register(new EAFlightHandler());
 	}
 
@@ -56,6 +61,7 @@ public class EACommonProxy {
 		itemMaterial = new EAItemMaterial(materialID);
 		itemWarpGem = new ItemWarpGem(itemWarpGemID);
 		itemAnnihilationManipulator = new ItemAnnihilationManipulator(annihilationManipulatorID);
+		itemHealingGem = new ItemHealingGem(healingGemID);
 		EAInit.addRecipes();
 		TickRegistry.registerTickHandler(new ITickHandler() {
 			
