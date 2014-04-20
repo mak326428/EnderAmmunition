@@ -8,6 +8,8 @@ import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
@@ -21,6 +23,7 @@ import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import enderamm.item.FireRayFX;
+import enderamm.item.ItemArmorEnderBase;
 
 /**
  * Just a not so powerful packet handler, as there's no such great demand.
@@ -47,6 +50,12 @@ public class EAPacketHandler implements IPacketHandler {
 			EntityPlayer player) {
 		// System.out.println(String.format("Ctrl: %s, Space: %s, Fire: %s", ""
 		// + ctrl, "" + space, "" + fire));
+		if (isPressingFire(player) && !fire) {
+			ItemStack is = player.inventory.armorInventory[0];
+			if (is != null && is.getItem() instanceof ItemArmorEnderBase && ((ItemArmor)is.getItem()).armorType == 0) {
+				((ItemArmorEnderBase)is.getItem()).doFireRay(player.worldObj, player, is);
+			}
+		}
 		if (playersCtrl.containsKey(player))
 			playersCtrl.remove(player);
 		if (playersSpace.containsKey(player))

@@ -52,7 +52,7 @@ public class EAFlightHandler {
 					if (is == null)
 						continue;
 					if (is.getItem() instanceof ItemArmorEnderBase)
-						if (((ItemArmorEnderBase) is.getItem()).allowsFlight(is))
+						if (((ItemArmorEnderBase) is.getItem()).allowsFlight(is, ep))
 							foundFlight = true;
 				}
 				if (!foundFlight) {

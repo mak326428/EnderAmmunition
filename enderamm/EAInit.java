@@ -64,16 +64,28 @@ public class EAInit {
 						TEBlocks.blockEnergyCell, 1, 4)));
 		// Annihilation Manipulator Recipe
 		GameRegistry.addRecipe(new ShapedRFRecipe(ItemAnnihilationManipulator
-				.getAnnihilationManipulator(0), "LLL", "IWI", "IRI", 'L',
+				.getAnnihilationManipulator(0), "LJL", "IWI", "IRI", 'L',
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 2), 'W',
 				new ItemStack(EACommonProxy.itemWarpGem), 'I', new ItemStack(
 						EACommonProxy.itemMaterial.itemID, 1, 1), 'R',
-				energyCapacitor));
+				energyCapacitor, 'J', new ItemStack(
+						EACommonProxy.itemMaterial.itemID, 1, 3)));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				EACommonProxy.itemMaterial.itemID, 1, 3), "ETE", "COC", "ERE",
 				'O', TEBlocks.blockTesseract, 'R', TEItems.itemComponent, 'T',
 				TEItems.itemComponent, 'E', new ItemStack(
 						EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
 				TEItems.itemComponent));
+		// HealingIIPotion FluxKinesisThingy RegenIIPotion
+		// EndopherumIngot PyrotheumLens EndopherumIngot
+		// EndopherumIngot FluxCapacitor EndopherumIngot
+		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
+				EACommonProxy.itemHealingGem), "HJR", "EPE", "ECE", 'E',
+				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
+				energyCapacitor, 'P', new ItemStack(
+						EACommonProxy.itemMaterial.itemID, 1, 2), 'J',
+				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 3), 'H',
+				new ItemStack(Item.potion.itemID, 1, 8229), 'R', new ItemStack(
+						Item.potion.itemID, 1, 8225)));
 	}
 }

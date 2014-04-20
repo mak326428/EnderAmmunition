@@ -10,7 +10,10 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = EnderAmmunition.MOD_ID, name = EnderAmmunition.MOD_NAME, version = EnderAmmunition.VERSION, dependencies = "required-after:IC2@[2.0,)")
+//@Mod(modid = EnderAmmunition.MOD_ID, name = EnderAmmunition.MOD_NAME, version = EnderAmmunition.VERSION, dependencies = "required-after:IC2@[2.0,)")
+//@NetworkMod(channels = { EnderAmmunition.MOD_ID }, clientSideRequired = true, serverSideRequired = false, packetHandler=EAPacketHandler.class)
+//public class EnderAmmunition {
+@Mod(modid = EnderAmmunition.MOD_ID, name = EnderAmmunition.MOD_NAME, version = EnderAmmunition.VERSION, dependencies="required-after:ThermalExpansion")
 @NetworkMod(channels = { EnderAmmunition.MOD_ID }, clientSideRequired = true, serverSideRequired = false, packetHandler=EAPacketHandler.class)
 public class EnderAmmunition {
 	public static final String MOD_ID = "EnderAmmunition";

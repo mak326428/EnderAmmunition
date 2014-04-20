@@ -2,12 +2,13 @@ package enderamm.item;
 
 import java.util.List;
 
+import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,8 +36,10 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 	public static final int COST_REGENERATION_PER_LEVEL = 60000;
 	public static final int COST_INSTANT_HEAL_PER_HP = 5000;
 	public static final int REGEN_DURATION = 400;
+	public static final int AUTOREGEN_COOLDOWN = 10;
 
 	public static final String STATE_NBT = "state";
+	public static final String COOLDOWN_NBT = "cooldown";
 
 	@SideOnly(Side.CLIENT)
 	public Icon mainIcon;
@@ -50,10 +53,38 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			this.setCreativeTab(ThermalExpansion.tabTools);
 		}
-		this.setFull3D();
+		// this.setFull3D();
 		setUnlocalizedName("itemHealingGem");
 		LanguageRegistry.instance().addStringLocalization(
 				"item.itemHealingGem.name", "Healing Gem");
+	}
+
+	public void doHeal(ItemStack par1ItemStack, EntityLivingBase par3EntityPlayer,
+			float energyPenalty) {
+		int needsToHP = (int) (par3EntityPlayer.getMaxHealth() - par3EntityPlayer
+				.getHealth());
+		if (needsToHP > 0) {
+			int regenLvl = itemRand.nextInt(3) + 1;
+			int regenCost = (int) (COST_REGENERATION_PER_LEVEL * regenLvl * energyPenalty);
+			if (getEnergyStored(par1ItemStack) >= regenCost) {
+				par3EntityPlayer.addPotionEffect(new PotionEffect(
+						Potion.regeneration.id, REGEN_DURATION, regenLvl));
+				par3EntityPlayer.addPotionEffect(new PotionEffect(
+						Potion.fireResistance.id, REGEN_DURATION, regenLvl));
+
+				extractEnergy(par1ItemStack, regenCost, false);
+				if (needsToHP > 0) {
+					int healInsta = itemRand.nextInt(needsToHP / 2 + 1) + 1;
+					int costHeal = (int) (COST_INSTANT_HEAL_PER_HP * healInsta * energyPenalty);
+					if (healInsta > 0) {
+						if (getEnergyStored(par1ItemStack) >= costHeal) {
+							par3EntityPlayer.heal(healInsta);
+							extractEnergy(par1ItemStack, costHeal, false);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
@@ -69,29 +100,7 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 										+ "ON"
 										: EnumChatFormatting.DARK_RED + "OFF"));
 			} else {
-				int needsToHP = (int) (par3EntityPlayer.getMaxHealth() - par3EntityPlayer
-						.getHealth());
-				if (needsToHP > 0) {
-					int regenLvl = itemRand.nextInt(3) + 1;
-					int regenCost = COST_REGENERATION_PER_LEVEL * regenLvl;
-					if (getEnergyStored(par1ItemStack) >= regenCost) {
-						par3EntityPlayer.addPotionEffect(new PotionEffect(
-								Potion.regeneration.id, REGEN_DURATION,
-								regenLvl));
-						extractEnergy(par1ItemStack, regenCost, false);
-						if (needsToHP > 0) {
-							int healInsta = itemRand.nextInt(needsToHP / 2 + 1) + 1;
-							int costHeal = COST_INSTANT_HEAL_PER_HP * healInsta;
-							if (healInsta > 0) {
-								if (getEnergyStored(par1ItemStack) >= costHeal) {
-									par3EntityPlayer.heal(healInsta);
-									extractEnergy(par1ItemStack, costHeal,
-											false);
-								}
-							}
-						}
-					}
-				}
+				doHeal(par1ItemStack, par3EntityPlayer, 1.0F);
 			}
 		}
 		par3EntityPlayer.swingItem();
@@ -125,7 +134,7 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean hasEffect(ItemStack par1ItemStack, int pass) {
-		return pass == 0;
+		return false;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -164,7 +173,35 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 		EntityPlayer player = (EntityPlayer) par3Entity;
 		if (par1ItemStack.stackTagCompound == null)
 			par1ItemStack.stackTagCompound = new NBTTagCompound();
+		int alreadyFound = 0;
+		for (ItemStack is : player.inventory.mainInventory) {
+			if (is != null && is.getItem() == this) {
+				if (is.stackTagCompound == null)
+					is.stackTagCompound = new NBTTagCompound();
+				if (is.stackTagCompound.getBoolean(STATE_NBT))
+					alreadyFound++;
+			}
+		}
+		if (alreadyFound > 1) {
+			player.addChatMessage(EnumChatFormatting.DARK_RED
+					+ "You can't have multiple active healing gems in your inventory at the same time.");
+			player.addChatMessage(EnumChatFormatting.DARK_RED
+					+ "They are all forcibly disabled.");
+			for (ItemStack is : player.inventory.mainInventory) {
+				if (is != null && is.getItem() == this) {
+					if (is.stackTagCompound == null)
+						is.stackTagCompound = new NBTTagCompound();
+					is.getTagCompound().setBoolean(STATE_NBT, false);
+				}
+			}
+		}
 		NBTTagCompound nbt = (NBTTagCompound) par1ItemStack.stackTagCompound;
+		if (nbt.getInteger(COOLDOWN_NBT) > 0)
+			nbt.setInteger(COOLDOWN_NBT, nbt.getInteger(COOLDOWN_NBT) - 1);
+		if (nbt.getBoolean(STATE_NBT) && nbt.getInteger(COOLDOWN_NBT) == 0) {
+			doHeal(par1ItemStack, player, 2.0F);
+			nbt.setInteger(COOLDOWN_NBT, AUTOREGEN_COOLDOWN);
+		}
 	}
 
 	public int getDisplayDamage(ItemStack stack) {
@@ -225,6 +262,9 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 	@SideOnly(Side.CLIENT)
 	public int getColorFromItemStack(ItemStack stack, int renderPass) {
 		if (renderPass == 0) {
+			if (stack.getTagCompound() != null
+					&& !stack.getTagCompound().getBoolean(STATE_NBT))
+				return 0x7F0000;
 			return ItemWarpGem.gemColor;
 		}
 		return 0xFFFFFF;
@@ -243,6 +283,15 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 			return this.mainIcon;
 		return null;
 	}
+	
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
+    {
+		World world = entity.worldObj;
+		if (!world.isRemote && entity instanceof EntityLivingBase)
+			doHeal(stack, (EntityLivingBase)entity, 2.5F);
+        return true;
+    }
 
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -255,7 +304,9 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 				+ (par1ItemStack.getTagCompound().getBoolean(STATE_NBT) ? EnumChatFormatting.DARK_GREEN
 						+ "ON"
 						: EnumChatFormatting.DARK_RED + "OFF"));
-		par3List.add("");
+		//par3List.add("");
+		//par3List.add(EnumChatFormatting.BLUE
+		//		+ "You can't have multiple healing gems in inventory.");
 	}
 
 }

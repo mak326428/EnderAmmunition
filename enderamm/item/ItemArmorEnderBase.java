@@ -23,11 +23,15 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ISpecialArmor;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import thermalexpansion.ThermalExpansion;
 import cofh.api.energy.IEnergyContainerItem;
 import cofh.util.EnergyHelper;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -49,11 +53,12 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		this.setMaxStackSize(1);
 		if (FMLCommonHandler.instance().getSide().isClient())
 			this.setCreativeTab(ThermalExpansion.tabTools);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public static Map<EntityPlayer, Integer> fireMap = Maps.newHashMap();
 
-	public static final int ENERGY_STORAGE = 10000000;
+	// public static final int ENERGY_STORAGE = 10000000;
 	public static final int TRANSFER_RATE = 100000;
 	public static final int ENERGY_PER_TICK_FLYING = 278;
 	public static final int ENERGY_HYPERJUMP = 4000;
@@ -87,7 +92,9 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 
 	@Override
 	public int getMaxEnergyStored(ItemStack arg0) {
-		return ENERGY_STORAGE;
+		if (armorType == 1)
+			return 50000000;
+		return 10000000;
 	}
 
 	@Override
@@ -97,8 +104,9 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 			EnergyHelper.setDefaultEnergyTag(container, 0);
 		}
 		int stored = container.stackTagCompound.getInteger(ENERGY_NBT);
-		int receive = Math.min(maxReceive,
-				Math.min(ENERGY_STORAGE - stored, TRANSFER_RATE));
+		int receive = Math
+				.min(maxReceive, Math.min(getMaxEnergyStored(container)
+						- stored, TRANSFER_RATE));
 
 		if (!simulate) {
 			stored += receive;
@@ -112,13 +120,13 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		if (stack.stackTagCompound == null) {
 			EnergyHelper.setDefaultEnergyTag(stack, 0);
 		}
-		return 1 + ENERGY_STORAGE
+		return 1 + getMaxEnergyStored(stack)
 				- stack.stackTagCompound.getInteger(ENERGY_NBT);
 	}
 
 	@Override
 	public int getMaxDamage(ItemStack stack) {
-		return 1 + ENERGY_STORAGE;
+		return 1 + getMaxEnergyStored(stack);
 	}
 
 	@Override
@@ -143,7 +151,8 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 	public void addInformation(ItemStack par1ItemStack,
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 		par3List.add(String.format("" + "Charge: %d / %d RF",
-				getEnergyStored(par1ItemStack), ENERGY_STORAGE));
+				getEnergyStored(par1ItemStack),
+				getMaxEnergyStored(par1ItemStack)));
 		boolean chestplate = armorType == 1;
 		boolean helmet = armorType == 0;
 		boolean leggings = armorType == 2;
@@ -151,14 +160,16 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
 				|| Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 		if (!shiftDown) {
-			par3List.add("Hold " + EnumChatFormatting.ITALIC + EnumChatFormatting.YELLOW + "Shift" + EnumChatFormatting.RESET + EnumChatFormatting.GRAY + " for Details");
-			 
+			par3List.add("Hold " + EnumChatFormatting.ITALIC
+					+ EnumChatFormatting.YELLOW + "Shift"
+					+ EnumChatFormatting.RESET + EnumChatFormatting.GRAY
+					+ " for Details");
+
 		} else {
 			par3List.add("");
 			par3List.add("Abilities: ");
 			if (chestplate) {
 				par3List.add("Extinguisher");
-				par3List.add("Creative-Mode Flight");
 				par3List.add("Active Item Charger");
 			} else if (helmet) {
 				par3List.add("Fire Ray Shooter");
@@ -169,6 +180,10 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 			} else if (boots) {
 				par3List.add("Jump Booster");
 			}
+			par3List.add("");
+			par3List.add("Full Set Bonus:");
+			par3List.add("Immortality");
+			par3List.add("Creative Mode Flight");
 		}
 	}
 
@@ -184,7 +199,6 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 			return 0.15D;
 		}
 		return 0.0D;
-		// TODO: check the recipes!!! do not forget, it would be awful!!!
 	}
 
 	public double getDamageAbsorptionRatio() {
@@ -231,8 +245,16 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		// System.out.println(ctrlDown);
 		boolean jumpDown = EAPacketHandler.isPressingSpace(player);
 		boolean fireDown = EAPacketHandler.isPressingFire(player);
+		boolean fullSet = ensureFullSet(player, ENERGY_PER_TICK_FLYING * 8);
 		if (chestplate) {
-			if (getEnergyStored(itemStack) >= ENERGY_PER_TICK_FLYING) {
+			if (fullSet) {
+				if (player.shouldHeal()
+						&& getEnergyStored(itemStack) >= getEnergyPerDamage()) {
+					player.setHealth(player.getMaxHealth());
+					extractEnergy(itemStack, getEnergyPerDamage(), false);
+				}
+			}
+			if (getEnergyStored(itemStack) >= ENERGY_PER_TICK_FLYING && fullSet) {
 				EAFlightHandler.allowFlight(player);
 				player.capabilities.allowFlying = true;
 				if (player.capabilities.isFlying) {
@@ -289,31 +311,8 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 				player.getFoodStats().addStats(2, 8);
 				extractEnergy(itemStack, ENERGY_PER_HUNGER_POINT * 2, false);
 			}
-			Entity e = EAUtil.getTarget(world, player, 128.0D);
-			if (e != null && getEnergyStored(itemStack) >= ENERGY_FIRE_RAY
-					&& !world.isRemote && fireDown) {
-				if (!fireMap.containsKey(player))
-					fireMap.put(player, 0);
-				int cooldown = fireMap.get(player);
-				boolean shouldFire = cooldown == 0;
-				if (shouldFire) {
-					fireMap.remove(player);
-					fireMap.put(player, 10);
-					extractEnergy(itemStack, ENERGY_FIRE_RAY, false);
-					e.setFire(10);
-					e.attackEntityFrom(DamageSource.inFire, 15);
-					for (int i = 0; i < 10; i++)
-						EAPacketHandler.sendFireRayPacket((float) player.posX,
-								(float) (player.posY + 1.6F),
-								(float) player.posZ, (float) e.posX,
-								(float) (e.posY + (e.height / 2)),
-								(float) e.posZ, world);
-				} else {
-					cooldown--;
-					fireMap.remove(player);
-					fireMap.put(player, cooldown);
-				}
-			}
+			if (fireDown)
+				doFireRay(world, player, itemStack);
 		} else if (leggings) {
 			if (!speedTickerMap.containsKey(player))
 				speedTickerMap.put(player, 0);
@@ -376,6 +375,34 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 			}
 		}
 	}
+	
+	public void doFireRay(World world, EntityPlayer player, ItemStack itemStack) {
+		Entity e = EAUtil.getTarget(world, player, 128.0D);
+		if (e != null && getEnergyStored(itemStack) >= ENERGY_FIRE_RAY
+				&& !world.isRemote) {
+			if (!fireMap.containsKey(player))
+				fireMap.put(player, 0);
+			int cooldown = fireMap.get(player);
+			boolean shouldFire = cooldown == 0;
+			if (shouldFire) {
+				fireMap.remove(player);
+				fireMap.put(player, 10);
+				extractEnergy(itemStack, ENERGY_FIRE_RAY, false);
+				e.setFire(10);
+				e.attackEntityFrom(DamageSource.inFire, 15);
+				for (int i = 0; i < 10; i++)
+					EAPacketHandler.sendFireRayPacket((float) player.posX,
+							(float) (player.posY + 1.6F),
+							(float) player.posZ, (float) e.posX,
+							(float) (e.posY + (e.height / 2)),
+							(float) e.posZ, world);
+			} else {
+				cooldown--;
+				fireMap.remove(player);
+				fireMap.put(player, cooldown);
+			}
+		}
+	}
 
 	public int getEnergyPerDamage() {
 		return 10000;
@@ -408,13 +435,55 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		discharged.stackTagCompound = new NBTTagCompound();
 		charged.stackTagCompound = new NBTTagCompound();
 		discharged.stackTagCompound.setInteger(ENERGY_NBT, 0);
-		charged.stackTagCompound.setInteger(ENERGY_NBT, ENERGY_STORAGE);
+		charged.stackTagCompound.setInteger(ENERGY_NBT,
+				getMaxEnergyStored(charged));
 		par3List.add(charged);
 		par3List.add(discharged);
 	}
 
-	public boolean allowsFlight(ItemStack is) {
-		return armorType == 1;
+	public static boolean ensureFullSet(EntityPlayer ep, int energyRoomForEach) {
+		boolean fullSet = true;
+		for (ItemStack is : ep.inventory.armorInventory)
+			if (is == null || !(is.getItem() instanceof ItemArmorEnderBase)) {
+				fullSet = false;
+				if (is != null
+						&& ((ItemArmorEnderBase) is.getItem())
+								.getEnergyStored(is) < energyRoomForEach) {
+					fullSet = false;
+				}
+			}
+		return fullSet;
+	}
+
+	public boolean allowsFlight(ItemStack is, EntityPlayer ep) {
+		return armorType == 1 && ensureFullSet(ep, ENERGY_PER_TICK_FLYING);
+	}
+	// TODO: uncomment when things get extra-crazy
+	/*public static List<String> blackList = Lists.newArrayList();
+	static {
+		blackList.add("rascher");
+		blackList.add("sergeyvol");
+		blackList.add("engineer");
+		blackList.add("sybershot");
+	}*/
+
+	@ForgeSubscribe
+	public void onEntityHurt(LivingHurtEvent lhe) {
+		World w = lhe.entityLiving.worldObj;
+		if (w.isRemote)
+			return;
+		if (!(lhe.entityLiving instanceof EntityPlayer))
+			return;
+		EntityPlayer player = (EntityPlayer) lhe.entityLiving;
+		//if (blackList.contains(player.username.toLowerCase()))
+		//	player.attackEntityFrom(lhe.source, lhe.ammount * 2);
+		int energyReq = (int) (lhe.ammount * getEnergyPerDamage());
+		if (ensureFullSet(player, energyReq)) {
+			lhe.setCanceled(true);
+			for (ItemStack is : player.inventory.armorInventory)
+				extractEnergy(is, energyReq, false);
+			//player.attackTime = 100;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

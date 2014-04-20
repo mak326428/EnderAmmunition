@@ -411,4 +411,11 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 				interpolate(getB(oldColor), getB(newColor), stage, STAGES));
 
 	}
+	
+	public static int interpolateColor(int c1, int c2, int st, int sts) {
+		return combine(
+				interpolate(getR(c1), getR(c2), st, sts),
+				interpolate(getG(c1), getG(c2), st, sts),
+				interpolate(getB(c1), getB(c2), st, sts));
+	}
 }
