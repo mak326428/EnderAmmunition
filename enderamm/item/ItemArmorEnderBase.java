@@ -314,7 +314,7 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		} else if (leggings) {
 			if (!speedTickerMap.containsKey(player))
 				speedTickerMap.put(player, 0);
-			float speed = 0.3F;
+			float speed = 0.6F;
 			if (getEnergyStored(itemStack) > ENERGY_SPEEDUP_TICKING
 					&& ((player.onGround) || (player.isInWater()))
 					&& (EAPacketHandler.isPressingCtrl(player))) {

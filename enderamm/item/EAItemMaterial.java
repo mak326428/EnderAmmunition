@@ -81,23 +81,16 @@ public class EAItemMaterial extends Item {
 		return "item." + itemNames.get(par1ItemStack.getItemDamage());
 	}
 
-	public static ItemStack generateRandomItem() {
-		int rnd = itemRand.nextInt(200);
-		switch (rnd) {
-		case 14:
-			return new ItemStack(Block.blockRedstone);
-		case 42:
-			return new ItemStack(Item.diamond, 3);
-		case 11:
-			return new ItemStack(Item.appleGold, 3);
-		case 62:
-			return new ItemStack(Item.enderPearl, 16);
-		case 75:
-			return new ItemStack(Block.blockNetherQuartz, 16);
-		case 24:
-			return new ItemStack(Item.emerald, 2);
-		default:
-			return new ItemStack(Block.cobblestone);
+	/*public static ItemStack generateRandomItem() {
+		Item b = null;
+		while (b == null)
+			b = Item.itemsList[itemRand.nextInt(255) + 1];
+		List<ItemStack> lst = Lists.newArrayList();
+		b.getSubItems(b.itemID, CreativeTabs.tabAllSearch, lst);
+		if (lst.size() > 0) {
+			return lst.get(itemRand.nextInt(lst.size()));
+		} else {
+			return null;
 		}
 	}
 
@@ -122,7 +115,7 @@ public class EAItemMaterial extends Item {
 
 		}
 		return false;
-	}
+	}*/
 
 	@SideOnly(Side.CLIENT)
 	@Override

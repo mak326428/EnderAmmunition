@@ -50,9 +50,9 @@ public class EAInit {
 						" MM", 'M', matter));
 		}
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
-				Item.glowstone, 20), " MM", "M  ", "   ", 'M', matter));
+				Item.glowstone, 28), " MM", "M  ", "   ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
-				Item.enderPearl, 16), " M ", "M  ", "   ", 'M', matter));
+				Item.enderPearl, 12), " M ", "M  ", "   ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.redstone,
 				56), " M ", "  M", "   ", 'M', matter));
 		GameRegistry
@@ -63,9 +63,13 @@ public class EAInit {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Block.oreGold,
 				8), " M ", "M M", " M ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
-				EACommonProxy.itemMaterial.itemID, 1, 0), "MPM",
-				'M', matter, 'P', new ItemStack(TEItems.itemMaterial, 1, 165)));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Block.dragonEgg), "MMM", "MNM", "MMM", 'M', matter, 'N', new ItemStack(Block.beacon)));
+				EACommonProxy.itemMaterial.itemID, 1, 0), "MPM", 'M', matter,
+				'P', new ItemStack(TEItems.itemMaterial, 1, 165)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				Block.obsidian, 16, 0), " M ", "  M", "   ", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				Block.dragonEgg), "MMM", "MNM", "MMM", 'M', matter, 'N',
+				new ItemStack(Block.beacon)));
 	}
 
 	public static ItemStack getIfAny(String oreDictName, int stackSize) {
@@ -144,9 +148,6 @@ public class EAInit {
 				TEItems.itemComponent, 'E', new ItemStack(
 						EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
 				TEItems.itemComponent));
-		// HealingIIPotion FluxKinesisThingy RegenIIPotion
-		// EndopherumIngot PyrotheumLens EndopherumIngot
-		// EndopherumIngot FluxCapacitor EndopherumIngot
 		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
 				EACommonProxy.itemHealingGem), "HJR", "EPE", "ECE", 'E',
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
