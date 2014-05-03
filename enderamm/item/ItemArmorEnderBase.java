@@ -4,18 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.input.Keyboard;
-
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
@@ -27,11 +23,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.input.Keyboard;
+
 import thermalexpansion.ThermalExpansion;
 import cofh.api.energy.IEnergyContainerItem;
 import cofh.util.EnergyHelper;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -319,7 +317,7 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 			float speed = 0.3F;
 			if (getEnergyStored(itemStack) > ENERGY_SPEEDUP_TICKING
 					&& ((player.onGround) || (player.isInWater()))
-					&& (player.isSprinting())) {
+					&& (EAPacketHandler.isPressingCtrl(player))) {
 				int speedTicker = speedTickerMap.containsKey(player) ? ((Integer) speedTickerMap
 						.get(player)).intValue() : 0;
 				speedTicker++;
@@ -446,7 +444,7 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		for (ItemStack is : ep.inventory.armorInventory)
 			if (is == null || !(is.getItem() instanceof ItemArmorEnderBase)) {
 				fullSet = false;
-				if (is != null
+				if (is != null && ((is.getItem()) instanceof ItemArmorEnderBase)
 						&& ((ItemArmorEnderBase) is.getItem())
 								.getEnergyStored(is) < energyRoomForEach) {
 					fullSet = false;

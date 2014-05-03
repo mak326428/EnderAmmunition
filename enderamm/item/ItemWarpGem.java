@@ -1,23 +1,13 @@
 package enderamm.item;
 
-import cofh.api.energy.IEnergyContainerItem;
-import cofh.util.EnergyHelper;
-import com.google.common.collect.Lists;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import enderamm.EAPacketHandler;
-import enderamm.TickUtil;
 import java.util.List;
 import java.util.Random;
+
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,9 +16,18 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
 import thermalexpansion.ThermalExpansion;
+import cofh.api.energy.IEnergyContainerItem;
+import cofh.util.EnergyHelper;
+
+import com.google.common.collect.Lists;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.EAPacketHandler;
 
 public class ItemWarpGem extends Item implements IEnergyContainerItem {
 	public static final int ENERGY_STORAGE = 10000000;

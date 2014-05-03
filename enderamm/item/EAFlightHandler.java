@@ -10,8 +10,6 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 
 import com.google.common.collect.Maps;
 
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
 import enderamm.EAPacketHandler;
 
 public class EAFlightHandler {

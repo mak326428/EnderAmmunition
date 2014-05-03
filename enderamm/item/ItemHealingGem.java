@@ -2,7 +2,6 @@ package enderamm.item;
 
 import java.util.List;
 
-import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;

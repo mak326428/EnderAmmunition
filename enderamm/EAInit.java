@@ -1,36 +1,104 @@
 package enderamm;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thermalexpansion.block.TEBlocks;
 import thermalexpansion.fluid.TEFluids;
-import thermalexpansion.item.ItemTEBase;
 import thermalexpansion.item.TEItems;
-import thermalexpansion.util.crafting.SmelterManager;
 import thermalexpansion.util.crafting.TransposerManager;
 import cpw.mods.fml.common.registry.GameRegistry;
 import enderamm.item.ItemAnnihilationManipulator;
 
 public class EAInit {
+
+	public static void addMatterRecipes() {
+		ItemStack matter = new ItemStack(EACommonProxy.itemMaterial.itemID, 1,
+				4);
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.diamond,
+				2), "MMM", "M M", "MMM", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.emerald,
+				1), "MMM", "MMM", "MMM", 'M', matter));
+		{
+			ItemStack ore = getIfAny("oreCopper", 32);
+			if (ore != null)
+				GameRegistry.addRecipe(new ShapedOreRecipe(ore, "M  ", "M  ",
+						"  M", 'M', matter));
+		}
+		{
+			ItemStack ore = getIfAny("oreTin", 24);
+			if (ore != null)
+				GameRegistry.addRecipe(new ShapedOreRecipe(ore, "M  ", "M  ",
+						" M ", 'M', matter));
+		}
+		{
+			ItemStack ore = getIfAny("oreLead", 10);
+			if (ore != null)
+				GameRegistry.addRecipe(new ShapedOreRecipe(ore, "M  ", " M ",
+						" M ", 'M', matter));
+		}
+		{
+			ItemStack ore = getIfAny("gemRuby", 3);
+			if (ore != null)
+				GameRegistry.addRecipe(new ShapedOreRecipe(ore, "MM ", " M ",
+						" MM", 'M', matter));
+		}
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				Item.glowstone, 20), " MM", "M  ", "   ", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				Item.enderPearl, 16), " M ", "M  ", "   ", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.redstone,
+				56), " M ", "  M", "   ", 'M', matter));
+		GameRegistry
+				.addRecipe(new ShapedOreRecipe(new ItemStack(Block.wood, 12),
+						"   ", " M ", "   ", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Block.oreIron,
+				24), "M M", " M ", "M M", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Block.oreGold,
+				8), " M ", "M M", " M ", 'M', matter));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				EACommonProxy.itemMaterial.itemID, 1, 0), "MPM",
+				'M', matter, 'P', new ItemStack(TEItems.itemMaterial, 1, 165)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Block.dragonEgg), "MMM", "MNM", "MMM", 'M', matter, 'N', new ItemStack(Block.beacon)));
+	}
+
+	public static ItemStack getIfAny(String oreDictName, int stackSize) {
+		List<ItemStack> oreDictRetr = OreDictionary.getOres(oreDictName);
+		if (oreDictRetr.size() > 0) {
+			ItemStack ret = oreDictRetr.get(0).copy();
+			if (ret != null) {
+				ret.stackSize = stackSize;
+				return ret;
+			}
+		}
+
+		return null;
+	}
+
 	public static void addRecipes() {
-		// Enderium Blend -> Endopherum Dust
-		TransposerManager.addFillRecipe(20000, TEItems.dustEnderium.copy(),
-				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 0),
-				new FluidStack(TEFluids.fluidPyrotheum, 2000), false);
 		// Glass -> Pyrotheum Lens
 		TransposerManager.addFillRecipe(40000, new ItemStack(Block.glass),
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 2),
 				new FluidStack(TEFluids.fluidPyrotheum, 8000), false);
-		// 16 Endopherum Dust -> Endopherum Ingot
-		ItemStack endopherumDusts = new ItemStack(
-				EACommonProxy.itemMaterial.itemID, 16, 0);
-		SmelterManager.addRecipe(40000, TEItems.dustPyrotheum.copy(),
-				endopherumDusts, new ItemStack(
-						EACommonProxy.itemMaterial.itemID, 1, 1));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				EACommonProxy.itemMaterial, 1, 1), "NNN", "NNN", "NNN", 'N',
+				new ItemStack(EACommonProxy.itemMaterial, 1, 0)));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(
+				EACommonProxy.itemMaterial, 9, 0), new ItemStack(
+				EACommonProxy.itemMaterial, 1, 1)));
+		// HMS
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				EACommonProxy.blockHMS, 1, 0), "ENE", "BRB", "EDE", 'E',
+				"ingotEnderium", 'N', new ItemStack(Item.netherStar), 'D',
+				new ItemStack(Block.dragonEgg), 'R', new ItemStack(
+						TEBlocks.blockEnergyCell, 1, 4), 'B', new ItemStack(
+						Block.blockEmerald)));
 		// Armor Recipes
 		ItemStack energyCapacitor = new ItemStack(TEItems.itemCapacitor, 1, 5);
 		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
@@ -87,5 +155,6 @@ public class EAInit {
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 3), 'H',
 				new ItemStack(Item.potion.itemID, 1, 8229), 'R', new ItemStack(
 						Item.potion.itemID, 1, 8225)));
+		addMatterRecipes();
 	}
 }

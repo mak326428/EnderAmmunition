@@ -6,9 +6,12 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import enderamm.block.BlockHMS;
+import enderamm.block.TileEntityHMS;
 import enderamm.item.EAFlightHandler;
 import enderamm.item.EAItemMaterial;
 import enderamm.item.ItemAnnihilationManipulator;
@@ -29,6 +32,7 @@ public class EACommonProxy {
 	public static int annihilationManipulatorID;
 	public static int healingGemID;
 	public static int magnetID;
+	public static int hmsID;
 
 	public static ItemArmorEnderBase itemArmorEnderBoots;
 	public static ItemArmorEnderBase itemArmorEnderLeggings;
@@ -39,6 +43,7 @@ public class EACommonProxy {
 	public static ItemAnnihilationManipulator itemAnnihilationManipulator;
 	public static ItemHealingGem itemHealingGem;
 	public static ItemEnderMagnet itemEnderMagnet;
+	public static BlockHMS blockHMS;
 
 	public void preInit(Configuration config) {
 		enderBootsID = config.getItem("itemArmorEnderBoots", 24564).getInt();
@@ -53,7 +58,9 @@ public class EACommonProxy {
 				"itemAnnihilationManipulator", 24571).getInt();
 		healingGemID = config.getItem("itemHealingGem", 24572).getInt();
 		magnetID = config.getItem("itemMagnet", 24573).getInt();
+		hmsID = config.getBlock("blockHMS", 2054).getInt();
 		MinecraftForge.EVENT_BUS.register(new EAFlightHandler());
+		NetworkRegistry.instance().registerGuiHandler(EnderAmmunition.instance, new EAGUIHandler());
 	}
 
 	public void postInit() {
@@ -83,6 +90,9 @@ public class EACommonProxy {
 		GameRegistry.registerItem(itemHealingGem, "tool_healing_gem");
 		itemEnderMagnet = new ItemEnderMagnet(magnetID);
 		GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
+		blockHMS = new BlockHMS(hmsID);
+		GameRegistry.registerBlock(blockHMS, "block_hms");
+		GameRegistry.registerTileEntity(TileEntityHMS.class, "enderamm.block.TileEntityHMS");
 		EAInit.addRecipes();
 		TickRegistry.registerTickHandler(new ITickHandler() {
 

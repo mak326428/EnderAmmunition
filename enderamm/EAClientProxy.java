@@ -5,10 +5,12 @@ import java.util.EnumSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.Configuration;
 
 import org.lwjgl.input.Keyboard;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.client.registry.KeyBindingRegistry.KeyHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -17,6 +19,9 @@ import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import enderamm.block.HMSTESR;
+import enderamm.block.ItemRendererHMS;
+import enderamm.block.TileEntityHMS;
 import enderamm.item.ItemArmorEnderBase;
 
 public class EAClientProxy extends EACommonProxy implements ITickHandler {
@@ -71,6 +76,10 @@ public class EAClientProxy extends EACommonProxy implements ITickHandler {
 					boolean tickEnd, boolean isRepeat) {
 			}
 		});
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityHMS.class,
+				new HMSTESR());
+		MinecraftForgeClient.registerItemRenderer(
+				EACommonProxy.blockHMS.blockID, new ItemRendererHMS());
 	}
 
 	@Override

@@ -1,37 +1,32 @@
 package enderamm.item;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Icon;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraft.world.World;
 import thermalexpansion.ThermalExpansion;
-import thermalexpansion.block.TEBlocks;
-import thermalexpansion.fluid.TEFluids;
-import thermalexpansion.item.TEItems;
-import thermalexpansion.util.crafting.SmelterManager;
-import thermalexpansion.util.crafting.TransposerManager;
 
 import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import enderamm.EACommonProxy;
 
 public class EAItemMaterial extends Item {
 	@SideOnly(Side.CLIENT)
 	public static List<Icon> itemTextures;
 
 	public static List<String> itemNames;
+	public static List<Integer> rareItems;
 
 	public EAItemMaterial(int par1) {
 		super(par1);
@@ -39,11 +34,19 @@ public class EAItemMaterial extends Item {
 		if (FMLCommonHandler.instance().getSide().isClient())
 			this.setCreativeTab(ThermalExpansion.tabTools);
 		itemNames = Lists.newArrayList();
-		addItem("dustEndopherum", "Endopherum Dust");
-		addItem("ingotEndopherum", "Endopherum Ingot");
-		addItem("lensPyrotheum", "Pyrotheum Lens");
-		addItem("rfKineticPreprocessor", "Flux-Kinesis Preprocessor");
-		
+		rareItems = Lists.newArrayList();
+		addItem("nuggetEndopherum", "Endopherum Nugget"); // 0
+		rareItems.add(0);
+		addItem("ingotEndopherum", "Endopherum Ingot"); // 1
+		rareItems.add(1);
+		addItem("lensPyrotheum", "Pyrotheum Lens"); // 2
+		rareItems.add(2);
+		addItem("rfKineticPreprocessor", "Flux-Kinesis Preprocessor"); // 3
+		rareItems.add(3);
+		addItem("energeticallyEnrichedMatterFragment",
+				"Energetically Enriched Matter Fragment"); // 4
+		rareItems.add(4);
+
 	}
 
 	public static void addItem(String name, String localizedName) {
@@ -60,6 +63,13 @@ public class EAItemMaterial extends Item {
 
 	@SideOnly(Side.CLIENT)
 	@Override
+	public EnumRarity getRarity(ItemStack par1ItemStack) {
+		return rareItems.contains(par1ItemStack.getItemDamage()) ? EnumRarity.epic
+				: EnumRarity.common;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs,
 			List par3List) {
 		for (int i = 0; i < itemNames.size(); i++)
@@ -71,6 +81,49 @@ public class EAItemMaterial extends Item {
 		return "item." + itemNames.get(par1ItemStack.getItemDamage());
 	}
 
+	public static ItemStack generateRandomItem() {
+		int rnd = itemRand.nextInt(200);
+		switch (rnd) {
+		case 14:
+			return new ItemStack(Block.blockRedstone);
+		case 42:
+			return new ItemStack(Item.diamond, 3);
+		case 11:
+			return new ItemStack(Item.appleGold, 3);
+		case 62:
+			return new ItemStack(Item.enderPearl, 16);
+		case 75:
+			return new ItemStack(Block.blockNetherQuartz, 16);
+		case 24:
+			return new ItemStack(Item.emerald, 2);
+		default:
+			return new ItemStack(Block.cobblestone);
+		}
+	}
+
+	@Override
+	public boolean onEntityItemUpdate(EntityItem entityItem) {
+		World w = entityItem.worldObj;
+		if (!w.isRemote && entityItem.getEntityItem().getItemDamage() == 4) {
+			// w.createExplosion(entityItem, entityItem.posX, entityItem.posY,
+			// entityItem.posZ,
+			// (float) itemRand.nextInt(entityItem.getEntityItem().stackSize *
+			// 200) / 1000.0F, false);
+			for (int i = 0; i < entityItem.getEntityItem().stackSize; i++) {
+				NBTTagCompound nbt = new NBTTagCompound();
+				entityItem.writeToNBT(nbt);
+				EntityItem entity = new EntityItem(w);
+				entity.readFromNBT(nbt);
+				entity.setEntityItemStack(generateRandomItem());
+				entity.delayBeforeCanPickup = 60;
+				w.spawnEntityInWorld(entity);
+			}
+			entityItem.setDead();
+
+		}
+		return false;
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void registerIcons(IconRegister par1IconRegister) {
@@ -79,6 +132,5 @@ public class EAItemMaterial extends Item {
 			itemTextures.add(par1IconRegister.registerIcon(String.format(
 					"enderamm:%s", name)));
 	}
-
 
 }
