@@ -66,7 +66,7 @@ public class EAInit {
 				EACommonProxy.itemMaterial.itemID, 1, 0), "MPM", 'M', matter,
 				'P', new ItemStack(TEItems.itemMaterial, 1, 165)));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
-				Block.obsidian, 16, 0), " M ", "  M", "   ", 'M', matter));
+				Block.obsidian, 24, 0), " M ", "M M", "   ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				Block.dragonEgg), "MMM", "MNM", "MMM", 'M', matter, 'N',
 				new ItemStack(Block.beacon)));
