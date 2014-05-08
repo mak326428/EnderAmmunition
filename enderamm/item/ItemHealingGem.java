@@ -24,6 +24,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.ColorRegistry;
 import enderamm.EACommonProxy;
 import enderamm.EAPacketHandler;
 
@@ -264,9 +265,9 @@ public class ItemHealingGem extends Item implements IEnergyContainerItem {
 			if (stack.getTagCompound() != null
 					&& !stack.getTagCompound().getBoolean(STATE_NBT))
 				return 0x7F0000;
-			return ItemWarpGem.gemColor;
+			return ColorRegistry.get(ColorRegistry.HEALING_GEM_OVERLAY).getColor();
 		}
-		return 0xFFFFFF;
+		return ColorRegistry.get(ColorRegistry.HEALING_GEM).getColor();
 	}
 
 	@SideOnly(Side.CLIENT)

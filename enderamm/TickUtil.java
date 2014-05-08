@@ -27,5 +27,6 @@ public class TickUtil {
 
 	public static void onRenderTick() {
 		ItemWarpGem.generateWarpGemColor();
+		ColorRegistry.updateGlobal();
 	}
 }

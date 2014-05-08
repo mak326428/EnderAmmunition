@@ -28,6 +28,10 @@ public class EnderAmmunition {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		PROXY.init();
+		//for (double angle = 0.0D; angle <= 1.0D; angle += 0.1D) {
+		//	String s = "arcsin(" + angle + ") = " + Math.toDegrees(Math.asin(angle));
+		//	System.out.println(s);
+		//}
 	}
 	
 	@EventHandler
