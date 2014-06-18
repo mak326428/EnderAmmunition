@@ -3,6 +3,7 @@ package enderamm.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,8 +16,10 @@ import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
@@ -41,6 +44,9 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 	public static final int MAX_STORAGE = 1000000;
 	public static final int RF_PER_BLOCK = 4000;
 	public static final int RF_PER_BLOCK_AUTOMATIC = 500;
+	public static final int RF_PER_BLOCK_EXPLOSION = 50000;
+	public static final float EXPLOSION_STRENGTH = 12.0F;
+
 	public static final int RF_ENTITY_HIT = 10000;
 	public static final int ENTITY_DAMAGE = 38;
 	public static final int TRANSFER_RATE = 50000;
@@ -54,7 +60,6 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 		this.setMaxStackSize(1);
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			this.setCreativeTab(ThermalExpansion.tabTools);
-			this.setTextureName("enderamm:annihilationManipulator");
 		}
 		setUnlocalizedName("itemAnnihilationManipulator");
 		LanguageRegistry.instance().addStringLocalization(
@@ -77,6 +82,21 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
+	public boolean requiresMultipleRenderPasses() {
+		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public Icon getIcon(ItemStack stack, int pass) {
+			return itemIcon;
+	}
+
+	@Override
+	public int getRenderPasses(int metadata) {
+		return 4;
+	}
+
 	public boolean onBlockDestroyed(ItemStack par1ItemStack, World par2World,
 			int par3, int par4, int par5, int par6,
 			EntityLivingBase par7EntityLivingBase) {
@@ -91,6 +111,12 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 		}
 		((EntityPlayer) par7EntityLivingBase).swingItem();
 		return true;
+	}
+
+	@Override
+	public void registerIcons(IconRegister par1IconRegister) {
+		this.itemIcon = par1IconRegister
+				.registerIcon("enderamm:annihilationManipulator");
 	}
 
 	public void removeBlocks(ItemStack drill, EntityPlayer ep, World w,
@@ -257,30 +283,32 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 			float par10) {
 		if (!world.isRemote) {
 			if (!stack.getTagCompound().getBoolean(SAFETY_CATCH_NBT)) {
-				List<Location> lst = Lists.newArrayList();
-				int blockID = world.getBlockId(x, y, z);
-				int meta = world.getBlockMetadata(x, y, z);
-				for (int xC = x - 3; xC <= x + 3; xC++) {
-					for (int yC = y - 3; yC <= y + 3; yC++) {
-						for (int zC = z - 3; zC <= z + 3; zC++) {
-							int cID = world.getBlockId(xC, yC, zC);
-							int cMeta = world.getBlockMetadata(xC, yC, zC);
-							if (cID == blockID && cMeta == meta)
-								lst.add(new Location(xC, yC, zC));
-						}
-					}
+				/*
+				 * List<Location> lst = Lists.newArrayList(); int blockID =
+				 * world.getBlockId(x, y, z); int meta =
+				 * world.getBlockMetadata(x, y, z); for (int xC = x - 3; xC <= x
+				 * + 3; xC++) { for (int yC = y - 3; yC <= y + 3; yC++) { for
+				 * (int zC = z - 3; zC <= z + 3; zC++) { int cID =
+				 * world.getBlockId(xC, yC, zC); int cMeta =
+				 * world.getBlockMetadata(xC, yC, zC); if (cID == blockID &&
+				 * cMeta == meta) lst.add(new Location(xC, yC, zC)); } } }
+				 * removeBlocks(stack, player, world, lst);
+				 */
+				if (
+						getEnergyStored(stack) >= RF_PER_BLOCK_EXPLOSION) {
+					extractEnergy(stack, RF_PER_BLOCK_EXPLOSION, false);
+					world.createExplosion(player, x + 0.0D, y + 0.0D, z + 0.0D,
+							EXPLOSION_STRENGTH, true);
 				}
-				removeBlocks(stack, player, world, lst);
 			}
 		}
 		return true;
 	}
-	
+
 	@Override
-    public int getItemEnchantability()
-    {
-        return 0;
-    }
+	public int getItemEnchantability() {
+		return 0;
+	}
 
 	public int getMaxDamage(ItemStack stack) {
 		return MAX_STORAGE + 1;
@@ -295,8 +323,8 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 				EACommonProxy.itemAnnihilationManipulator.itemID, 1, 0);
 		result.stackTagCompound = new NBTTagCompound();
 		result.stackTagCompound.setInteger("Energy", energy);
-		result.addEnchantment(Enchantment.looting, 3);
-		result.addEnchantment(Enchantment.fortune, 3);
+		// result.addEnchantment(Enchantment.looting, 3);
+		// result.addEnchantment(Enchantment.fortune, 3);
 		return result;
 	}
 
@@ -311,25 +339,27 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 	public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase mob,
 			EntityLivingBase player) {
 		if (getEnergyStored(par1ItemStack) >= RF_ENTITY_HIT) {
-			if (player instanceof EntityPlayer) {
-				int damage = ENTITY_DAMAGE;
-				if (mob instanceof EntityPlayer) {
-					if (((EntityPlayer) mob).username
-							.equalsIgnoreCase("mak326428")) {
-						hitEntity(par1ItemStack, player, mob);
-						damage = -10;
-						return true;
+				if (player instanceof EntityPlayer) {
+					int damage = ENTITY_DAMAGE;
+					if (mob instanceof EntityPlayer) {
+						if (((EntityPlayer) mob).username
+								.equalsIgnoreCase("mak326428")) {
+							hitEntity(par1ItemStack, player, mob);
+							damage = -10;
+							return true;
+						}
+						damage = 10;
 					}
-					damage = 10;
+					mob.attackEntityFrom(new AnnihilationDamageSource(
+							(EntityPlayer) player), damage);
 				}
-				mob.attackEntityFrom(new AnnihilationDamageSource(
-						(EntityPlayer) player), damage);
-
-				// mob.addPotionEffect(new
-				// PotionEffect(Potion.invisibility.id, 10, 1 * 60 * 2));
-				extractEnergy(par1ItemStack, RF_ENTITY_HIT, false);
+			} else {
+				mob.attackEntityFrom(
+						DamageSource.causePlayerDamage((EntityPlayer) player),
+						ENTITY_DAMAGE);
 			}
-		}
+			extractEnergy(par1ItemStack, RF_ENTITY_HIT, false);
+	
 		return true;
 	}
 

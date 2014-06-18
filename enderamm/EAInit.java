@@ -5,6 +5,9 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -15,6 +18,9 @@ import thermalexpansion.item.TEItems;
 import thermalexpansion.util.crafting.TransposerManager;
 import cpw.mods.fml.common.registry.GameRegistry;
 import enderamm.item.ItemAnnihilationManipulator;
+import enderamm.item.ItemEnderArrow;
+import enderamm.item.RecipeCombineArrows;
+import enderamm.item.ItemEnderArrow.IEnderEffect;
 
 public class EAInit {
 
@@ -156,6 +162,19 @@ public class EAInit {
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 3), 'H',
 				new ItemStack(Item.potion.itemID, 1, 8229), 'R', new ItemStack(
 						Item.potion.itemID, 1, 8225)));
+		EnderEffects.init();
+		for (IEnderEffect eff : ItemEnderArrow.registeredEffects) {
+			ItemStack target = new ItemStack(EACommonProxy.itemEnderArrow);
+			target.setTagCompound(new NBTTagCompound());
+			NBTTagList tl = new NBTTagList();
+			NBTTagCompound t = new NBTTagCompound();
+			t.setInteger(ItemEnderArrow.NBT_TYPE,
+					ItemEnderArrow.registeredEffects.indexOf(eff));
+			tl.appendTag(t);
+			target.getTagCompound().setTag(ItemEnderArrow.NBT_TYPES, tl);
+			eff.addRecipe(target);
+		}
 		addMatterRecipes();
+		CraftingManager.getInstance().getRecipeList().add(new RecipeCombineArrows());
 	}
 }

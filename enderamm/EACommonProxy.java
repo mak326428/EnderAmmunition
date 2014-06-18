@@ -16,6 +16,8 @@ import enderamm.item.EAFlightHandler;
 import enderamm.item.EAItemMaterial;
 import enderamm.item.ItemAnnihilationManipulator;
 import enderamm.item.ItemArmorEnderBase;
+import enderamm.item.ItemEnderArrow;
+import enderamm.item.ItemEnderBow;
 import enderamm.item.ItemEnderMagnet;
 import enderamm.item.ItemHealingGem;
 import enderamm.item.ItemWarpGem;
@@ -31,7 +33,9 @@ public class EACommonProxy {
 	public static int itemWarpGemID;
 	public static int annihilationManipulatorID;
 	public static int healingGemID;
+	public static int enderBowID;
 	public static int magnetID;
+	public static int enderArrowID;
 	public static int hmsID;
 
 	public static ItemArmorEnderBase itemArmorEnderBoots;
@@ -43,6 +47,8 @@ public class EACommonProxy {
 	public static ItemAnnihilationManipulator itemAnnihilationManipulator;
 	public static ItemHealingGem itemHealingGem;
 	public static ItemEnderMagnet itemEnderMagnet;
+	public static ItemEnderBow itemEnderBow;
+	public static ItemEnderArrow itemEnderArrow;
 	public static BlockHMS blockHMS;
 
 	public void preInit(Configuration config) {
@@ -58,6 +64,8 @@ public class EACommonProxy {
 				"itemAnnihilationManipulator", 24571).getInt();
 		healingGemID = config.getItem("itemHealingGem", 24572).getInt();
 		magnetID = config.getItem("itemMagnet", 24573).getInt();
+		enderBowID = config.getItem("itemEnderBow", 24574).getInt();
+		enderArrowID = config.getItem("itemEnderArrow", 24575).getInt();
 		hmsID = config.getBlock("blockHMS", 2054).getInt();
 		MinecraftForge.EVENT_BUS.register(new EAFlightHandler());
 		NetworkRegistry.instance().registerGuiHandler(EnderAmmunition.instance, new EAGUIHandler());
@@ -88,6 +96,10 @@ public class EACommonProxy {
 				"tool_fastbreaker");
 		itemHealingGem = new ItemHealingGem(healingGemID);
 		GameRegistry.registerItem(itemHealingGem, "tool_healing_gem");
+		itemEnderArrow = new ItemEnderArrow(enderArrowID);
+		GameRegistry.registerItem(itemEnderArrow, "item_ender_arrow");
+		itemEnderBow = new ItemEnderBow(enderBowID);
+		GameRegistry.registerItem(itemEnderBow, "tool_ender_bow");
 		itemEnderMagnet = new ItemEnderMagnet(magnetID);
 		GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
 		blockHMS = new BlockHMS(hmsID);
