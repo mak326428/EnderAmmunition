@@ -19,18 +19,15 @@ public abstract class IPacket {
     /**
      * Read stuff here.
      *
-     * @param bytes
-     *            DataInputStream, for convenience
-     * @throws Throwable
-     *             If IOException/something else bad occured. (like EOF)
+     * @param bytes DataInputStream, for convenience
+     * @throws Throwable If IOException/something else bad occured. (like EOF)
      */
     public abstract void read(DataInputStream bytes) throws Throwable;
 
     /**
      * Write stuff here.
      *
-     * @param bytes
-     *            DataOutputStream, for convenience
+     * @param bytes DataOutputStream, for convenience
      * @throws Throwable
      */
     public abstract void write(DataOutputStream bytes) throws Throwable;
@@ -38,7 +35,9 @@ public abstract class IPacket {
     /**
      * Executed right after {@link #read(DataInputStream)}. Isn't marked as
      * abstract, so SideOnly(Side.CLIENT) is safe here.
+     *
      * @param player
      */
-    public void execute(EntityPlayerMP player) {}
+    public void execute(EntityPlayerMP player) {
+    }
 }
