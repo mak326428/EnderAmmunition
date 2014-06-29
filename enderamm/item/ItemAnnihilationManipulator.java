@@ -53,6 +53,8 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 
 	public static final String BREAK_COOLDOWN_STORAGE = "breakCooldown";
 	public static final String SAFETY_CATCH_NBT = "safetyCatch";
+	
+	public static boolean ALLOW_EXPLOSION = true;
 
 	public ItemAnnihilationManipulator(int par1) {
 		super(par1, EnumToolMaterial.EMERALD);
@@ -114,6 +116,7 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister
 				.registerIcon("enderamm:annihilationManipulator");
@@ -190,7 +193,7 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World,
 			EntityPlayer par3EntityPlayer) {
 		if (!par2World.isRemote) {
-			if (EAPacketHandler.isPressingCtrl(par3EntityPlayer)) {
+			if (EAPacketHandler.isPressingCtrl(par3EntityPlayer) && ALLOW_EXPLOSION) {
 				par1ItemStack.getTagCompound().setBoolean(
 						SAFETY_CATCH_NBT,
 						!par1ItemStack.getTagCompound().getBoolean(
@@ -282,7 +285,7 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
 			int x, int y, int z, int sideHit, float par8, float par9,
 			float par10) {
 		if (!world.isRemote) {
-			if (!stack.getTagCompound().getBoolean(SAFETY_CATCH_NBT)) {
+			if (!stack.getTagCompound().getBoolean(SAFETY_CATCH_NBT) && ALLOW_EXPLOSION) {
 				/*
 				 * List<Location> lst = Lists.newArrayList(); int blockID =
 				 * world.getBlockId(x, y, z); int meta =

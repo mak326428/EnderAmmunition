@@ -76,6 +76,9 @@ public class EAInit {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				Block.dragonEgg), "MMM", "MNM", "MMM", 'M', matter, 'N',
 				new ItemStack(Block.beacon)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Item.skull, 1,
+				1), "MMM", "MSM", "MMM", 'M', matter, 'S', new ItemStack(
+				Item.skull, 1, 0)));
 	}
 
 	public static ItemStack getIfAny(String oreDictName, int stackSize) {
@@ -128,6 +131,10 @@ public class EAInit {
 				EACommonProxy.itemArmorEnderBoots), "#C#", "# #", '#',
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1), 'C',
 				energyCapacitor));
+		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
+				EACommonProxy.itemEnderMagnet), "EPE", "PRP", "EPE", 'E',
+				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1), 'R',
+				energyCapacitor, 'P', new ItemStack(Item.enderPearl)));
 		// GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
 		// EACommonProxy.itemMaterial.itemID, 1, 3), " # ", " # ", '#',
 		// new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1)));
@@ -162,6 +169,11 @@ public class EAInit {
 				new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 3), 'H',
 				new ItemStack(Item.potion.itemID, 1, 8229), 'R', new ItemStack(
 						Item.potion.itemID, 1, 8225)));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
+				EACommonProxy.itemEnderBow), "DE ", "DBE", "DE ", 'D',
+				new ItemStack(Block.dragonEgg), 'B',
+				new ItemStack(Item.bow, 1), 'E', new ItemStack(
+						EACommonProxy.itemMaterial.itemID, 1, 1)));
 		EnderEffects.init();
 		for (IEnderEffect eff : ItemEnderArrow.registeredEffects) {
 			ItemStack target = new ItemStack(EACommonProxy.itemEnderArrow);
@@ -175,6 +187,7 @@ public class EAInit {
 			eff.addRecipe(target);
 		}
 		addMatterRecipes();
-		CraftingManager.getInstance().getRecipeList().add(new RecipeCombineArrows());
+		CraftingManager.getInstance().getRecipeList()
+				.add(new RecipeCombineArrows());
 	}
 }

@@ -131,6 +131,7 @@ public class TileEntityHMS extends TileEntity implements ISidedInventory,
 		enderTank.writeToNBT(eT);
 		par1NBTTagCompound.setCompoundTag("enderTank", eT);
 		this.storage.writeToNBT(par1NBTTagCompound);
+		par1NBTTagCompound.setInteger("progressReached", progress);
 	}
 
 	@Override
@@ -152,6 +153,7 @@ public class TileEntityHMS extends TileEntity implements ISidedInventory,
 				.getCompoundTag("glowstoneTank"));
 		enderTank.readFromNBT(par1NBTTagCompound.getCompoundTag("enderTank"));
 		this.storage.readFromNBT(par1NBTTagCompound);
+		progress = par1NBTTagCompound.getInteger("progressReached");
 	}
 
 	@Override

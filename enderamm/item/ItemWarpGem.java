@@ -42,7 +42,6 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 	public static int stage = -1;
 	public static int gemColor;
 	public static int STAGES = 60;
-	public static final String NBT_ENTRY_LIST = "dimensionalEntries";
 	public static final String NBT_DIM_ID = "dimID";
 	public static final String NBT_X = "x";
 	public static final String NBT_Y = "y";
@@ -182,38 +181,15 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 		par3List.add(String.format("Charge: %d / %d RF",
 				new Object[] { Integer.valueOf(getEnergyStored(par1ItemStack)),
 						Integer.valueOf(10000000) }));
-
-		DimensionalLinkEntry[] entries = readEntries(par1ItemStack);
-		if (entries.length != 0) {
+		if (par1ItemStack.stackTagCompound.hasKey(NBT_DIM_ID)) {
 			par3List.add("");
 			par3List.add("Bound to:");
-			for (DimensionalLinkEntry entry : entries) {
-				String dimName = DimensionManager.getProvider(entry.dimID)
-						.getDimensionName();
-
-				par3List.add(String.format(
-						"[%s] %d:%d:%d",
-						new Object[] { dimName, Integer.valueOf(entry.x),
-								Integer.valueOf(entry.y),
-								Integer.valueOf(entry.z) }));
-			}
+			par3List.add(String.format(
+					"[%s] %d:%d:%d",
+					new Object[] { par1ItemStack.stackTagCompound.getInteger(NBT_DIM_ID), par1ItemStack.stackTagCompound.getInteger(NBT_X),
+						par1ItemStack.stackTagCompound.getInteger(NBT_Y), par1ItemStack.stackTagCompound.getInteger(NBT_Z) }));
+		
 		}
-	}
-
-	public static DimensionalLinkEntry[] readEntries(ItemStack is) {
-		if (is.stackTagCompound == null)
-			is.stackTagCompound = new NBTTagCompound();
-		NBTTagList list = is.getTagCompound().getTagList("dimensionalEntries");
-		DimensionalLinkEntry[] entry = new DimensionalLinkEntry[list.tagCount()];
-		for (int i = 0; i < list.tagCount(); i++) {
-			NBTTagCompound tag = (NBTTagCompound) list.tagAt(i);
-			int dimID = tag.getInteger("dimID");
-			int x = tag.getInteger("x");
-			int y = tag.getInteger("y");
-			int z = tag.getInteger("z");
-			entry[i] = new DimensionalLinkEntry(dimID, x, y, z);
-		}
-		return entry;
 	}
 
 	public boolean ensureCooldown(ItemStack is) {
@@ -258,53 +234,43 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 		}
 	}
 
-	public static void addEntry(ItemStack is, DimensionalLinkEntry dle) {
-		if (is.stackTagCompound == null)
-			is.stackTagCompound = new NBTTagCompound();
-		if (!is.getTagCompound().hasKey("dimensionalEntries"))
-			is.getTagCompound().setTag("dimensionalEntries", new NBTTagList());
-		NBTTagList list = is.getTagCompound().getTagList("dimensionalEntries");
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("dimID", dle.dimID);
-		tag.setInteger("x", dle.x);
-		tag.setInteger("y", dle.y);
-		tag.setInteger("z", dle.z);
-		list.appendTag(tag);
-		is.getTagCompound().setTag("dimensionalEntries", list);
-	}
-
 	public ItemStack onItemRightClick(ItemStack itemStack, World world,
 			EntityPlayer player) {
-		DimensionalLinkEntry[] entries = readEntries(itemStack);
+		// DimensionalLinkEntry[] entries = readEntries(itemStack);
+		if (itemStack.stackTagCompound == null && !world.isRemote)
+			itemStack.stackTagCompound = new NBTTagCompound();
 		if (player.isSneaking()) {
 			if (!world.isRemote) {
 				int dimID = world.provider.dimensionId;
-				DimensionalLinkEntry alreadyHasForThisWorld = null;
-				for (DimensionalLinkEntry entry : entries)
-					if (entry.dimID == dimID)
-						alreadyHasForThisWorld = entry;
-				if (alreadyHasForThisWorld != null)
-					removeEntry(itemStack, alreadyHasForThisWorld.dimID);
-				addEntry(
-						itemStack,
-						new DimensionalLinkEntry(dimID, (int) Math
-								.floor(player.posX), (int) Math
-								.floor(player.posY), (int) Math
-								.floor(player.posZ)));
+				// addEntry(
+				// itemStack,
+				// new DimensionalLinkEntry(dimID, (int) Math
+				// .floor(player.posX), (int) Math
+				// .floor(player.posY), (int) Math
+				// .floor(player.posZ)));
+				
+				itemStack.stackTagCompound.setInteger(NBT_DIM_ID, dimID);
+				itemStack.stackTagCompound.setInteger(NBT_X,
+						(int) Math.floor(player.posX));
+				itemStack.stackTagCompound.setInteger(NBT_Y, (int) Math.floor(player.posY));
+				itemStack.stackTagCompound.setInteger(NBT_Z, (int) Math.floor(player.posZ));
 
 				player.addChatMessage(EnumChatFormatting.DARK_GREEN
-						+ "Warp point for this world set.");
+						+ "Warp point set.");
 			}
 		} else {
-			int dimID = world.provider.dimensionId;
-			DimensionalLinkEntry link = null;
-			for (DimensionalLinkEntry entry : entries)
-				if (entry.dimID == dimID)
-					link = entry;
-			if (link != null) {
-				double targetX = link.x + 0.5D;
-				double targetY = link.y + 1.0D;
-				double targetZ = link.z + 0.5D;
+			if (!itemStack.stackTagCompound.hasKey(NBT_DIM_ID)) {
+				if (!world.isRemote)
+				player.addChatMessage(EnumChatFormatting.DARK_RED
+						+ "Warp point not set.");
+				return itemStack;
+			}
+			int dimID_in_this_world = world.provider.dimensionId;
+			int dimID_itemStack = itemStack.stackTagCompound.getInteger(NBT_DIM_ID);
+			if (dimID_in_this_world == dimID_itemStack) {
+				double targetX = itemStack.stackTagCompound.getInteger(NBT_X) + 0.5D;
+				double targetY = itemStack.stackTagCompound.getInteger(NBT_Y) + 1.0D;
+				double targetZ = itemStack.stackTagCompound.getInteger(NBT_Z) + 0.5D;
 				EAVector3 targetVec = new EAVector3(targetX, targetY, targetZ);
 				EAVector3 playerVec = EAVector3.fromEntityCenter(player);
 				double distance = targetVec.subtract(playerVec).mag();
@@ -330,53 +296,12 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 				}
 			} else {
 				player.addChatMessage(EnumChatFormatting.DARK_RED
-						+ "Warp point is not set for this world.");
+						+ "Wrong dimension.");
 			}
 
 		}
 
 		return itemStack;
-	}
-
-	public static void removeEntry(ItemStack is, int dimID) {
-		DimensionalLinkEntry[] entries = readEntries(is);
-		List<DimensionalLinkEntry> shouldWriteThen = Lists.newArrayList();
-		for (DimensionalLinkEntry entry : entries)
-			if (entry.dimID != dimID)
-				shouldWriteThen.add(entry);
-		is.getTagCompound().setTag("dimensionalEntries", new NBTTagList());
-		for (DimensionalLinkEntry entry : shouldWriteThen)
-			addEntry(is, entry);
-	}
-
-	public static class DimensionalLinkEntry {
-		private int dimID;
-		private int x;
-		private int y;
-		private int z;
-
-		public DimensionalLinkEntry(int d, int x, int y, int z) {
-			this.dimID = d;
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-
-		public int getDimensionID() {
-			return this.dimID;
-		}
-
-		public int getX() {
-			return this.x;
-		}
-
-		public int getY() {
-			return this.y;
-		}
-
-		public int getZ() {
-			return this.z;
-		}
 	}
 
 	public static int getR(int color) {
@@ -410,10 +335,9 @@ public class ItemWarpGem extends Item implements IEnergyContainerItem {
 				interpolate(getB(oldColor), getB(newColor), stage, STAGES));
 
 	}
-	
+
 	public static int interpolateColor(int c1, int c2, int st, int sts) {
-		return combine(
-				interpolate(getR(c1), getR(c2), st, sts),
+		return combine(interpolate(getR(c1), getR(c2), st, sts),
 				interpolate(getG(c1), getG(c2), st, sts),
 				interpolate(getB(c1), getB(c2), st, sts));
 	}

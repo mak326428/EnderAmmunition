@@ -257,7 +257,7 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 				player.capabilities.allowFlying = true;
 				if (player.capabilities.isFlying) {
 					if (ctrlDown) {
-						float boost = 0.23f;
+						float boost = 0.25f;
 						boolean doBoost = true;
 						if (jumpDown) {
 							player.motionY += boost + 0.03D;

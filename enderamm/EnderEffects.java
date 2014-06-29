@@ -18,6 +18,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import thermalexpansion.fluid.TEFluids;
 import cpw.mods.fml.common.registry.GameRegistry;
 import enderamm.item.ItemAnnihilationManipulator.AnnihilationDamageSource;
+import enderamm.item.ItemAnnihilationManipulator;
 import enderamm.item.ItemEnderArrow;
 import enderamm.item.ItemEnderArrow.IEnderEffect;
 
@@ -117,8 +118,8 @@ public class EnderEffects {
 
 				GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
 						'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
-						new ItemStack(Item.bucketLava), 'G',
-						new ItemStack(Block.glowStone)));
+						new ItemStack(Item.bucketLava), 'G', new ItemStack(
+								Block.glowStone)));
 			}
 		});
 		ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -131,8 +132,8 @@ public class EnderEffects {
 			public void apply(Entity e, EntityPlayer shooter,
 					ItemStack arrowStack, World w) {
 				Random rnd = new Random();
-				//e.attackEntityFrom(DamageSource.fall,
-				//		rnd.nextInt(10) + 10);
+				// e.attackEntityFrom(DamageSource.fall,
+				// rnd.nextInt(10) + 10);
 				e.motionX *= -rnd.nextInt(10);
 				e.motionZ *= -rnd.nextInt(10);
 				e.motionY += 5 + rnd.nextInt(15);
@@ -143,8 +144,8 @@ public class EnderEffects {
 
 				GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
 						'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
-						new ItemStack(Item.ghastTear), 'G',
-						new ItemStack(Block.glowStone)));
+						new ItemStack(Item.ghastTear), 'G', new ItemStack(
+								Block.glowStone)));
 			}
 		});
 		ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -156,16 +157,19 @@ public class EnderEffects {
 			@Override
 			public void apply(Entity e, EntityPlayer shooter,
 					ItemStack arrowStack, World w) {
-				w.createExplosion(null, e.posX, e.posY - 2.0D, e.posZ, 5.0F, true);
+				w.createExplosion(null, e.posX, e.posY - 2.0D, e.posZ, 5.0F,
+						true);
 			}
 
 			@Override
 			public void addRecipe(ItemStack target) {
-
-				GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
-						'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
-						new ItemStack(Block.tnt), 'G',
-						new ItemStack(Block.glowStone)));
+				if (ItemAnnihilationManipulator.ALLOW_EXPLOSION) {
+					GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP",
+							"GG", 'A', new ItemStack(
+									EACommonProxy.itemEnderArrow), 'P',
+							new ItemStack(Block.tnt), 'G', new ItemStack(
+									Block.glowStone)));
+				}
 			}
 		});
 	}

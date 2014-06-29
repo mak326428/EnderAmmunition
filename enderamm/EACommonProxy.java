@@ -37,6 +37,7 @@ public class EACommonProxy {
 	public static int magnetID;
 	public static int enderArrowID;
 	public static int hmsID;
+	public static int solarPanelID;
 
 	public static ItemArmorEnderBase itemArmorEnderBoots;
 	public static ItemArmorEnderBase itemArmorEnderLeggings;
@@ -67,6 +68,8 @@ public class EACommonProxy {
 		enderBowID = config.getItem("itemEnderBow", 24574).getInt();
 		enderArrowID = config.getItem("itemEnderArrow", 24575).getInt();
 		hmsID = config.getBlock("blockHMS", 2054).getInt();
+		solarPanelID = config.getBlock("blockSolarPanel", 2055).getInt();
+		ItemAnnihilationManipulator.ALLOW_EXPLOSION = config.get(Configuration.CATEGORY_GENERAL, "allowExplosionFeatures", true, "Toggles the most dangerous features griefing-wise (Annihilation Manipulator's explosion feature, Ender-Infused Explosive Arrows, etc.)").getBoolean(true);
 		MinecraftForge.EVENT_BUS.register(new EAFlightHandler());
 		NetworkRegistry.instance().registerGuiHandler(EnderAmmunition.instance, new EAGUIHandler());
 	}
