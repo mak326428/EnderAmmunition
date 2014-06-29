@@ -62,6 +62,6 @@ public class PacketFireRay extends IPacket {
         pfr.tX = tX;
         pfr.tY = tY;
         pfr.tZ = tZ;
-        EAPacketHandler.sendToAllAround(pfr, new NetworkRegistry.TargetPoint(world.provider.dimensionId, (double)sX, (double)sY, (double)sZ, 256.0D));
+        EAPacketHandler.sendToAllAround(pfr, new NetworkRegistry.TargetPoint(world.provider.dimensionId, (double) sX, (double) sY, (double) sZ, 256.0D));
     }
 }

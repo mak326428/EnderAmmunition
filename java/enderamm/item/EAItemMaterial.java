@@ -1,84 +1,82 @@
 package enderamm.item;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import enderamm.TEProxy;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import com.google.common.collect.Lists;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.IIcon;
 
+import java.util.List;
+
 public class EAItemMaterial extends Item {
-	@SideOnly(Side.CLIENT)
-	public static List<IIcon> itemTextures;
+    @SideOnly(Side.CLIENT)
+    public static List<IIcon> itemTextures;
 
-	public static List<String> itemNames;
-	public static List<Integer> rareItems;
+    public static List<String> itemNames;
+    public static List<Integer> rareItems;
 
-	public EAItemMaterial() {
-		super();
-		this.setHasSubtypes(true);
-		if (FMLCommonHandler.instance().getSide().isClient())
-			this.setCreativeTab(TEProxy.tabTETools);
-		itemNames = Lists.newArrayList();
-		rareItems = Lists.newArrayList();
-		addItem("nuggetEndopherum", "Endopherum Nugget"); // 0
-		rareItems.add(0);
-		addItem("ingotEndopherum", "Endopherum Ingot"); // 1
-		rareItems.add(1);
-		addItem("lensPyrotheum", "Pyrotheum Lens"); // 2
-		rareItems.add(2);
-		addItem("rfKineticPreprocessor", "Flux-Kinesis Preprocessor"); // 3
-		rareItems.add(3);
-		addItem("energeticallyEnrichedMatterFragment",
-				"Energetically Enriched Matter Fragment"); // 4
-		rareItems.add(4);
+    public EAItemMaterial() {
+        super();
+        this.setHasSubtypes(true);
+        if (FMLCommonHandler.instance().getSide().isClient())
+            this.setCreativeTab(TEProxy.tabTETools);
+        itemNames = Lists.newArrayList();
+        rareItems = Lists.newArrayList();
+        addItem("nuggetEndopherum", "Endopherum Nugget"); // 0
+        rareItems.add(0);
+        addItem("ingotEndopherum", "Endopherum Ingot"); // 1
+        rareItems.add(1);
+        addItem("lensPyrotheum", "Pyrotheum Lens"); // 2
+        rareItems.add(2);
+        addItem("rfKineticPreprocessor", "Flux-Kinesis Preprocessor"); // 3
+        rareItems.add(3);
+        addItem("energeticallyEnrichedMatterFragment",
+                "Energetically Enriched Matter Fragment"); // 4
+        rareItems.add(4);
 
-	}
+    }
 
-	public static void addItem(String name, String localizedName) {
-		itemNames.add(name);
-		LanguageRegistry.instance().addStringLocalization(
-				String.format("item.%s.name", name), localizedName);
-	}
+    public static void addItem(String name, String localizedName) {
+        itemNames.add(name);
+        LanguageRegistry.instance().addStringLocalization(
+                String.format("item.%s.name", name), localizedName);
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public IIcon getIconFromDamage(int par1) {
-		return itemTextures.get(par1);
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public IIcon getIconFromDamage(int par1) {
+        return itemTextures.get(par1);
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		return rareItems.contains(par1ItemStack.getItemDamage()) ? EnumRarity.epic
-				: EnumRarity.common;
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public EnumRarity getRarity(ItemStack par1ItemStack) {
+        return rareItems.contains(par1ItemStack.getItemDamage()) ? EnumRarity.epic
+                : EnumRarity.common;
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		for (int i = 0; i < itemNames.size(); i++)
-			par3List.add(new ItemStack(par1, 1, i));
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
+                            List par3List) {
+        for (int i = 0; i < itemNames.size(); i++)
+            par3List.add(new ItemStack(par1, 1, i));
+    }
 
-	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
-		return "item." + itemNames.get(par1ItemStack.getItemDamage());
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack par1ItemStack) {
+        return "item." + itemNames.get(par1ItemStack.getItemDamage());
+    }
 
 	/*public static ItemStack generateRandomItem() {
-		Item b = null;
+        Item b = null;
 		while (b == null)
 			b = Item.itemsList[itemRand.nextInt(255) + 1];
 		List<ItemStack> lst = Lists.newArrayList();
@@ -113,13 +111,13 @@ public class EAItemMaterial extends Item {
 		return false;
 	}*/
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerIcons(IIconRegister par1IconRegister) {
-		itemTextures = Lists.newArrayList();
-		for (String name : itemNames)
-			itemTextures.add(par1IconRegister.registerIcon(String.format(
-					"enderamm:%s", name)));
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerIcons(IIconRegister par1IconRegister) {
+        itemTextures = Lists.newArrayList();
+        for (String name : itemNames)
+            itemTextures.add(par1IconRegister.registerIcon(String.format(
+                    "enderamm:%s", name)));
+    }
 
 }

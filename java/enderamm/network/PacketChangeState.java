@@ -68,7 +68,7 @@ public class PacketChangeState extends IPacket {
         TileEntity te = w.getTileEntity(x, y, z);
         if (te != null) {
             if (te instanceof IReceiveServerEvents) {
-                ((IReceiveServerEvents)te).onServerEvent(eventID, nbtData);
+                ((IReceiveServerEvents) te).onServerEvent(eventID, nbtData);
             }
         }
     }

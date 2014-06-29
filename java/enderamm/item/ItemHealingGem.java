@@ -1,7 +1,12 @@
 package enderamm.item;
 
-import java.util.List;
-
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.ColorRegistry;
+import enderamm.EACommonProxy;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,13 +25,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import enderamm.ColorRegistry;
-import enderamm.EACommonProxy;
+
+import java.util.List;
 
 public class ItemHealingGem extends Item implements IEnergyContainerItem {
 

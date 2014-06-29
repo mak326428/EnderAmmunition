@@ -1,28 +1,28 @@
 package enderamm;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ClientEnergyHUD {
 
-	public static class HUDLine {
-		public ItemStack displayItem;
-		public String info;
+    public static class HUDLine {
+        public ItemStack displayItem;
+        public String info;
 
-		public HUDLine(ItemStack item, String i) {
-			this.displayItem = item;
-			this.info = i;
-		}
-	}
+        public HUDLine(ItemStack item, String i) {
+            this.displayItem = item;
+            this.info = i;
+        }
+    }
 
-	public static void doRenderHUD(EntityPlayer player, World world,
-			Minecraft mc) {
-		/*
+    public static void doRenderHUD(EntityPlayer player, World world,
+                                   Minecraft mc) {
+        /*
 		 * //System.out.println("Rendering HUD"); List<HUDLine> lines =
 		 * Lists.newArrayList(); // Filling list ItemStack[] armorInv =
 		 * player.inventory.armorInventory; for (int i = armorInv.length - 1; i
@@ -47,5 +47,5 @@ public class ClientEnergyHUD {
 		 * fontRenderer.drawString(l.info, x, y, 0xFFFFFF); y -= 6; x = 2; y +=
 		 * 16; } GL11.glEnable(GL11.GL_LIGHTING); //GL11.glPopMatrix();
 		 */
-	}
+    }
 }

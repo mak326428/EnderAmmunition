@@ -1,7 +1,14 @@
 package enderamm.item;
 
-import java.util.List;
-
+import cofh.api.energy.IEnergyContainerItem;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.EACommonProxy;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import net.minecraft.block.Block;
@@ -22,17 +29,8 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
-import cofh.api.energy.IEnergyContainerItem;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import enderamm.EACommonProxy;
+import java.util.List;
 
 public class ItemAnnihilationManipulator extends ItemPickaxe implements
         IEnergyContainerItem {
@@ -281,7 +279,7 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
         if (!world.isRemote) {
             if (!stack.getTagCompound().getBoolean(SAFETY_CATCH_NBT) && ALLOW_EXPLOSION) {
                 /*
-				 * List<Location> lst = Lists.newArrayList(); int blockID =
+                 * List<Location> lst = Lists.newArrayList(); int blockID =
 				 * world.getBlockId(x, y, z); int meta =
 				 * world.getBlockMetadata(x, y, z); for (int xC = x - 3; xC <= x
 				 * + 3; xC++) { for (int yC = y - 3; yC <= y + 3; yC++) { for

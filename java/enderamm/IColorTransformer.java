@@ -1,6 +1,7 @@
 package enderamm;
 
 public interface IColorTransformer {
-	int getColor();
-	void update();
+    int getColor();
+
+    void update();
 }

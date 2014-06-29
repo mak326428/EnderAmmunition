@@ -45,7 +45,8 @@ public class PacketGUIPressButton extends IPacket {
 
     /**
      * Creates new packet, fills it with TE's coordinates and sets buttonID to given, then sends to server.
-     * @param te TileEntity to get coordinates from
+     *
+     * @param te       TileEntity to get coordinates from
      * @param buttonID ID of a button
      */
     public static void issue(TileEntity te, int buttonID) {
@@ -78,7 +79,7 @@ public class PacketGUIPressButton extends IPacket {
             if (ws != null) {
                 TileEntity te = ws.getTileEntity(x, y, z);
                 if (te != null && te instanceof IHasButton)
-                    ((IHasButton)te).handleButtonClick(buttonID);
+                    ((IHasButton) te).handleButtonClick(buttonID);
             }
         } catch (Throwable t) {
             t.printStackTrace();

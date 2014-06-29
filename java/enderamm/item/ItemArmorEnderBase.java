@@ -1,10 +1,12 @@
 package enderamm.item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import cofh.api.energy.IEnergyContainerItem;
+import com.google.common.collect.Maps;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.EAUtil;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import enderamm.network.PacketFireRay;
@@ -26,441 +28,435 @@ import net.minecraftforge.common.ISpecialArmor;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.oredict.OreDictionary;
-
 import org.lwjgl.input.Keyboard;
 
-import cofh.api.energy.IEnergyContainerItem;
-
-import com.google.common.collect.Maps;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import enderamm.EAUtil;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
-		IEnergyContainerItem {
-	public static final String ENERGY_NBT = "Energy";
-	public static int RENDER_INDEX;
-	@SideOnly(Side.CLIENT)
-	public IIcon[] icons;
+        IEnergyContainerItem {
+    public static final String ENERGY_NBT = "Energy";
+    public static int RENDER_INDEX;
+    @SideOnly(Side.CLIENT)
+    public IIcon[] icons;
 
-	public ItemArmorEnderBase(int armorType) {
-		super(ArmorMaterial.DIAMOND, RENDER_INDEX, armorType);
-		this.setNoRepair();
-		this.setMaxStackSize(1);
-		if (FMLCommonHandler.instance().getSide().isClient())
-			this.setCreativeTab(TEProxy.tabTETools);
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+    public ItemArmorEnderBase(int armorType) {
+        super(ArmorMaterial.DIAMOND, RENDER_INDEX, armorType);
+        this.setNoRepair();
+        this.setMaxStackSize(1);
+        if (FMLCommonHandler.instance().getSide().isClient())
+            this.setCreativeTab(TEProxy.tabTETools);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-	public static Map<EntityPlayer, Integer> fireMap = Maps.newHashMap();
+    public static Map<EntityPlayer, Integer> fireMap = Maps.newHashMap();
 
-	// public static final int ENERGY_STORAGE = 10000000;
-	public static final int TRANSFER_RATE = 100000;
-	public static final int ENERGY_PER_TICK_FLYING = 278;
-	public static final int ENERGY_HYPERJUMP = 4000;
-	public static final int ENERGY_SPEEDUP_TICKING = 6000;
-	public static final int ENERGY_FIRE_RAY = 30000;
-	public static final int ENERGY_PER_HUNGER_POINT = 10000;
+    // public static final int ENERGY_STORAGE = 10000000;
+    public static final int TRANSFER_RATE = 100000;
+    public static final int ENERGY_PER_TICK_FLYING = 278;
+    public static final int ENERGY_HYPERJUMP = 4000;
+    public static final int ENERGY_SPEEDUP_TICKING = 6000;
+    public static final int ENERGY_FIRE_RAY = 30000;
+    public static final int ENERGY_PER_HUNGER_POINT = 10000;
 
-	@Override
-	public int extractEnergy(ItemStack container, int maxExtract,
-			boolean simulate) {
-		if (container.stackTagCompound == null) {
-			TEProxy.setDefaultEnergyTag(container, 0);
-		}
-		int stored = container.stackTagCompound.getInteger(ENERGY_NBT);
-		int extract = Math.min(maxExtract, stored);
-
-		if (!simulate) {
-			stored -= extract;
-			container.stackTagCompound.setInteger(ENERGY_NBT, stored);
-		}
-		return extract;
-	}
-
-	@Override
-	public int getEnergyStored(ItemStack container) {
-		if (container.stackTagCompound == null) {
-			TEProxy.setDefaultEnergyTag(container, 0);
-		}
-		return container.stackTagCompound.getInteger(ENERGY_NBT);
-	}
-
-	@Override
-	public int getMaxEnergyStored(ItemStack arg0) {
-		if (armorType == 1)
-			return 50000000;
-		return 10000000;
-	}
-
-	@Override
-	public int receiveEnergy(ItemStack container, int maxReceive,
-			boolean simulate) {
-		if (container.stackTagCompound == null) {
+    @Override
+    public int extractEnergy(ItemStack container, int maxExtract,
+                             boolean simulate) {
+        if (container.stackTagCompound == null) {
             TEProxy.setDefaultEnergyTag(container, 0);
-		}
-		int stored = container.stackTagCompound.getInteger(ENERGY_NBT);
-		int receive = Math
-				.min(maxReceive, Math.min(getMaxEnergyStored(container)
-						- stored, TRANSFER_RATE));
+        }
+        int stored = container.stackTagCompound.getInteger(ENERGY_NBT);
+        int extract = Math.min(maxExtract, stored);
 
-		if (!simulate) {
-			stored += receive;
-			container.stackTagCompound.setInteger(ENERGY_NBT, stored);
-		}
-		return receive;
-	}
+        if (!simulate) {
+            stored -= extract;
+            container.stackTagCompound.setInteger(ENERGY_NBT, stored);
+        }
+        return extract;
+    }
 
-	@Override
-	public int getDisplayDamage(ItemStack stack) {
-		if (stack.stackTagCompound == null) {
-			TEProxy.setDefaultEnergyTag(stack, 0);
-		}
-		return 1 + getMaxEnergyStored(stack)
-				- stack.stackTagCompound.getInteger(ENERGY_NBT);
-	}
+    @Override
+    public int getEnergyStored(ItemStack container) {
+        if (container.stackTagCompound == null) {
+            TEProxy.setDefaultEnergyTag(container, 0);
+        }
+        return container.stackTagCompound.getInteger(ENERGY_NBT);
+    }
 
-	@Override
-	public int getMaxDamage(ItemStack stack) {
-		return 1 + getMaxEnergyStored(stack);
-	}
+    @Override
+    public int getMaxEnergyStored(ItemStack arg0) {
+        if (armorType == 1)
+            return 50000000;
+        return 10000000;
+    }
 
-	@Override
-	public boolean isDamaged(ItemStack stack) {
-		return stack.getItemDamage() != OreDictionary.WILDCARD_VALUE;
-	}
+    @Override
+    public int receiveEnergy(ItemStack container, int maxReceive,
+                             boolean simulate) {
+        if (container.stackTagCompound == null) {
+            TEProxy.setDefaultEnergyTag(container, 0);
+        }
+        int stored = container.stackTagCompound.getInteger(ENERGY_NBT);
+        int receive = Math
+                .min(maxReceive, Math.min(getMaxEnergyStored(container)
+                        - stored, TRANSFER_RATE));
 
-	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
-		if (getEnergyStored(armor) >= getEnergyPerDamage()) {
-			return (int) Math.round(20.0D * getBaseAbsorptionRatio()
-					* getDamageAbsorptionRatio());
-		}
-		return 0;
-	}
+        if (!simulate) {
+            stored += receive;
+            container.stackTagCompound.setInteger(ENERGY_NBT, stored);
+        }
+        return receive;
+    }
 
-	@Override
-	public void damageArmor(EntityLivingBase entity, ItemStack stack,
-			DamageSource source, int damage, int slot) {
-		extractEnergy(stack, damage * getEnergyPerDamage(), false);
-	}
+    @Override
+    public int getDisplayDamage(ItemStack stack) {
+        if (stack.stackTagCompound == null) {
+            TEProxy.setDefaultEnergyTag(stack, 0);
+        }
+        return 1 + getMaxEnergyStored(stack)
+                - stack.stackTagCompound.getInteger(ENERGY_NBT);
+    }
 
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
-		par3List.add(String.format("" + "Charge: %d / %d RF",
-				getEnergyStored(par1ItemStack),
-				getMaxEnergyStored(par1ItemStack)));
-		boolean chestplate = armorType == 1;
-		boolean helmet = armorType == 0;
-		boolean leggings = armorType == 2;
-		boolean boots = armorType == 3;
-		boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
-		if (!shiftDown) {
-			par3List.add("Hold " + EnumChatFormatting.ITALIC
-					+ EnumChatFormatting.YELLOW + "Shift"
-					+ EnumChatFormatting.RESET + EnumChatFormatting.GRAY
-					+ " for Details");
+    @Override
+    public int getMaxDamage(ItemStack stack) {
+        return 1 + getMaxEnergyStored(stack);
+    }
 
-		} else {
-			par3List.add("");
-			par3List.add("Abilities: ");
-			if (chestplate) {
-				par3List.add("Extinguisher");
-				par3List.add("Active Item Charger");
-			} else if (helmet) {
-				par3List.add("Fire Ray Shooter");
-				par3List.add("Food Replenisher");
-			} else if (leggings) {
-				par3List.add("Underwater Motion Accelerator");
-				par3List.add("Sprint Booster");
-			} else if (boots) {
-				par3List.add("Jump Booster");
-			}
-			par3List.add("");
-			par3List.add("Full Set Bonus:");
-			par3List.add("Immortality");
-			par3List.add("Creative Mode Flight");
-		}
-	}
+    @Override
+    public boolean isDamaged(ItemStack stack) {
+        return stack.getItemDamage() != OreDictionary.WILDCARD_VALUE;
+    }
 
-	private double getBaseAbsorptionRatio() {
-		switch (this.armorType) {
-		case 0:
-			return 0.15D;
-		case 1:
-			return 0.4D;
-		case 2:
-			return 0.3D;
-		case 3:
-			return 0.15D;
-		}
-		return 0.0D;
-	}
+    public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+        if (getEnergyStored(armor) >= getEnergyPerDamage()) {
+            return (int) Math.round(20.0D * getBaseAbsorptionRatio()
+                    * getDamageAbsorptionRatio());
+        }
+        return 0;
+    }
 
-	public double getDamageAbsorptionRatio() {
-		return 1.1D;
-	}
+    @Override
+    public void damageArmor(EntityLivingBase entity, ItemStack stack,
+                            DamageSource source, int damage, int slot) {
+        extractEnergy(stack, damage * getEnergyPerDamage(), false);
+    }
 
-	public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase entity,
-			ItemStack armor, DamageSource source, double damage, int slot) {
-		if ((source == DamageSource.fall) && (this.armorType == 3)) {
-			int energyPerDamage = getEnergyPerDamage();
-			int damageLimit = energyPerDamage > 0 ? 25 * getEnergyStored(armor)
-					/ energyPerDamage : 0;
+    public void addInformation(ItemStack par1ItemStack,
+                               EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+        par3List.add(String.format("" + "Charge: %d / %d RF",
+                getEnergyStored(par1ItemStack),
+                getMaxEnergyStored(par1ItemStack)));
+        boolean chestplate = armorType == 1;
+        boolean helmet = armorType == 0;
+        boolean leggings = armorType == 2;
+        boolean boots = armorType == 3;
+        boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
+                || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+        if (!shiftDown) {
+            par3List.add("Hold " + EnumChatFormatting.ITALIC
+                    + EnumChatFormatting.YELLOW + "Shift"
+                    + EnumChatFormatting.RESET + EnumChatFormatting.GRAY
+                    + " for Details");
 
-			return new ISpecialArmor.ArmorProperties(10, 1.0D, damageLimit);
-		} else {
-			if (source.isUnblockable())
-				return new ISpecialArmor.ArmorProperties(0, 0.0D, 0);
+        } else {
+            par3List.add("");
+            par3List.add("Abilities: ");
+            if (chestplate) {
+                par3List.add("Extinguisher");
+                par3List.add("Active Item Charger");
+            } else if (helmet) {
+                par3List.add("Fire Ray Shooter");
+                par3List.add("Food Replenisher");
+            } else if (leggings) {
+                par3List.add("Underwater Motion Accelerator");
+                par3List.add("Sprint Booster");
+            } else if (boots) {
+                par3List.add("Jump Booster");
+            }
+            par3List.add("");
+            par3List.add("Full Set Bonus:");
+            par3List.add("Immortality");
+            par3List.add("Creative Mode Flight");
+        }
+    }
 
-			double absorptionRatio = getBaseAbsorptionRatio()
-					* getDamageAbsorptionRatio();
-			int energyPerDamage = getEnergyPerDamage();
+    private double getBaseAbsorptionRatio() {
+        switch (this.armorType) {
+            case 0:
+                return 0.15D;
+            case 1:
+                return 0.4D;
+            case 2:
+                return 0.3D;
+            case 3:
+                return 0.15D;
+        }
+        return 0.0D;
+    }
 
-			int damageLimit = energyPerDamage > 0 ? 25 * getEnergyStored(armor)
-					/ energyPerDamage : 0;
+    public double getDamageAbsorptionRatio() {
+        return 1.1D;
+    }
 
-			return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
-					damageLimit);
-		}
-	}
+    public ISpecialArmor.ArmorProperties getProperties(EntityLivingBase entity,
+                                                       ItemStack armor, DamageSource source, double damage, int slot) {
+        if ((source == DamageSource.fall) && (this.armorType == 3)) {
+            int energyPerDamage = getEnergyPerDamage();
+            int damageLimit = energyPerDamage > 0 ? 25 * getEnergyStored(armor)
+                    / energyPerDamage : 0;
 
-	public static HashMap<EntityPlayer, Boolean> onGroundMap = new HashMap<EntityPlayer, Boolean>();
-	private static float jumpCharge;
-	public static final float MAX_JUMP_CHARGE = 1.3F;
-	public static HashMap<EntityPlayer, Integer> speedTickerMap = new HashMap<EntityPlayer, Integer>();
+            return new ISpecialArmor.ArmorProperties(10, 1.0D, damageLimit);
+        } else {
+            if (source.isUnblockable())
+                return new ISpecialArmor.ArmorProperties(0, 0.0D, 0);
 
-	@Override
-	public void onArmorTick(World world, EntityPlayer player,
-			ItemStack itemStack) {
-		boolean chestplate = armorType == 1;
-		boolean helmet = armorType == 0;
-		boolean leggings = armorType == 2;
-		boolean boots = armorType == 3;
-		boolean ctrlDown = EAKeyboard.isPressingCtrl(player);
-		// System.out.println(ctrlDown);
-		boolean jumpDown = EAKeyboard.isPressingSpace(player);
-		boolean fireDown = EAKeyboard.isPressingFire(player);
+            double absorptionRatio = getBaseAbsorptionRatio()
+                    * getDamageAbsorptionRatio();
+            int energyPerDamage = getEnergyPerDamage();
+
+            int damageLimit = energyPerDamage > 0 ? 25 * getEnergyStored(armor)
+                    / energyPerDamage : 0;
+
+            return new ISpecialArmor.ArmorProperties(0, absorptionRatio,
+                    damageLimit);
+        }
+    }
+
+    public static HashMap<EntityPlayer, Boolean> onGroundMap = new HashMap<EntityPlayer, Boolean>();
+    private static float jumpCharge;
+    public static final float MAX_JUMP_CHARGE = 1.3F;
+    public static HashMap<EntityPlayer, Integer> speedTickerMap = new HashMap<EntityPlayer, Integer>();
+
+    @Override
+    public void onArmorTick(World world, EntityPlayer player,
+                            ItemStack itemStack) {
+        boolean chestplate = armorType == 1;
+        boolean helmet = armorType == 0;
+        boolean leggings = armorType == 2;
+        boolean boots = armorType == 3;
+        boolean ctrlDown = EAKeyboard.isPressingCtrl(player);
+        // System.out.println(ctrlDown);
+        boolean jumpDown = EAKeyboard.isPressingSpace(player);
+        boolean fireDown = EAKeyboard.isPressingFire(player);
         //System.out.println("Fire:Boost:Space:!isRemote " + fireDown + ":" + ctrlDown + ":" + jumpDown + ":" + !world.isRemote);
-		boolean fullSet = ensureFullSet(player, ENERGY_PER_TICK_FLYING * 8);
-		if (chestplate) {
-			if (fullSet) {
-				if (player.shouldHeal()
-						&& getEnergyStored(itemStack) >= getEnergyPerDamage()) {
-					player.setHealth(player.getMaxHealth());
-					extractEnergy(itemStack, getEnergyPerDamage(), false);
-				}
-			}
-			if (getEnergyStored(itemStack) >= ENERGY_PER_TICK_FLYING && fullSet) {
-				EAFlightHandler.allowFlight(player);
-				player.capabilities.allowFlying = true;
-				if (player.capabilities.isFlying) {
-					if (ctrlDown) {
-						float boost = 0.25f;
-						boolean doBoost = true;
-						if (jumpDown) {
-							player.motionY += boost + 0.03D;
-							doBoost = false;
-						}
-						if (player.isSneaking()) {
-							player.motionX -= boost + 0.03D;
-							doBoost = false;
-						}
-						if (doBoost) {
-							player.moveFlying(0.0F, 1.0F, boost);
-						}
-						// System.out.println("Boosting");
-						// System.out.println("world.isRemote: " +
-						// world.isRemote);
-						if (!world.isRemote)
-							if (!player.capabilities.isCreativeMode) {
-								extractEnergy(itemStack,
-										(int) (ENERGY_PER_TICK_FLYING * 3F),
-										false);
-							}
-					}
-					if (!world.isRemote) {
-						if (!player.capabilities.isCreativeMode) {
-							extractEnergy(itemStack, ENERGY_PER_TICK_FLYING,
-									false);
-						}
-					}
-				}
-			} else {
-				EAFlightHandler.removePlayerFlight(player);
-			}
-			if (!world.isRemote) {
-				player.extinguish();
-				ItemStack currentlyHolding = player.inventory.getCurrentItem();
-				if (currentlyHolding != null
-						&& TEProxy.isEnergyContainerItem(currentlyHolding)) {
-					IEnergyContainerItem ic = (IEnergyContainerItem) currentlyHolding
-							.getItem();
-					extractEnergy(itemStack, ic.receiveEnergy(currentlyHolding,
-							getEnergyStored(itemStack), false), false);
-				}
-			}
-		} else if (helmet) {
-			// InventoryPlayer inventory = player.inventory;
-			if (player.getFoodStats().getFoodLevel() < 18
-					&& !world.isRemote
-					&& getEnergyStored(itemStack) >= ENERGY_PER_HUNGER_POINT * 2) {
-				player.getFoodStats().addStats(2, 8);
-				extractEnergy(itemStack, ENERGY_PER_HUNGER_POINT * 2, false);
-			}
-			if (fireDown)
-				doFireRay(world, player, itemStack);
-		} else if (leggings) {
-			if (!speedTickerMap.containsKey(player))
-				speedTickerMap.put(player, 0);
-			float speed = 0.6F;
-			if (getEnergyStored(itemStack) > ENERGY_SPEEDUP_TICKING
-					&& ((player.onGround) || (player.isInWater()))
-					&& (EAKeyboard.isPressingCtrl(player))) {
-				int speedTicker = speedTickerMap.containsKey(player) ? ((Integer) speedTickerMap
-						.get(player)).intValue() : 0;
-				speedTicker++;
+        boolean fullSet = ensureFullSet(player, ENERGY_PER_TICK_FLYING * 8);
+        if (chestplate) {
+            if (fullSet) {
+                if (player.shouldHeal()
+                        && getEnergyStored(itemStack) >= getEnergyPerDamage()) {
+                    player.setHealth(player.getMaxHealth());
+                    extractEnergy(itemStack, getEnergyPerDamage(), false);
+                }
+            }
+            if (getEnergyStored(itemStack) >= ENERGY_PER_TICK_FLYING && fullSet) {
+                EAFlightHandler.allowFlight(player);
+                player.capabilities.allowFlying = true;
+                if (player.capabilities.isFlying) {
+                    if (ctrlDown) {
+                        float boost = 0.25f;
+                        boolean doBoost = true;
+                        if (jumpDown) {
+                            player.motionY += boost + 0.03D;
+                            doBoost = false;
+                        }
+                        if (player.isSneaking()) {
+                            player.motionX -= boost + 0.03D;
+                            doBoost = false;
+                        }
+                        if (doBoost) {
+                            player.moveFlying(0.0F, 1.0F, boost);
+                        }
+                        // System.out.println("Boosting");
+                        // System.out.println("world.isRemote: " +
+                        // world.isRemote);
+                        if (!world.isRemote)
+                            if (!player.capabilities.isCreativeMode) {
+                                extractEnergy(itemStack,
+                                        (int) (ENERGY_PER_TICK_FLYING * 3F),
+                                        false);
+                            }
+                    }
+                    if (!world.isRemote) {
+                        if (!player.capabilities.isCreativeMode) {
+                            extractEnergy(itemStack, ENERGY_PER_TICK_FLYING,
+                                    false);
+                        }
+                    }
+                }
+            } else {
+                EAFlightHandler.removePlayerFlight(player);
+            }
+            if (!world.isRemote) {
+                player.extinguish();
+                ItemStack currentlyHolding = player.inventory.getCurrentItem();
+                if (currentlyHolding != null
+                        && TEProxy.isEnergyContainerItem(currentlyHolding)) {
+                    IEnergyContainerItem ic = (IEnergyContainerItem) currentlyHolding
+                            .getItem();
+                    extractEnergy(itemStack, ic.receiveEnergy(currentlyHolding,
+                            getEnergyStored(itemStack), false), false);
+                }
+            }
+        } else if (helmet) {
+            // InventoryPlayer inventory = player.inventory;
+            if (player.getFoodStats().getFoodLevel() < 18
+                    && !world.isRemote
+                    && getEnergyStored(itemStack) >= ENERGY_PER_HUNGER_POINT * 2) {
+                player.getFoodStats().addStats(2, 8);
+                extractEnergy(itemStack, ENERGY_PER_HUNGER_POINT * 2, false);
+            }
+            if (fireDown)
+                doFireRay(world, player, itemStack);
+        } else if (leggings) {
+            if (!speedTickerMap.containsKey(player))
+                speedTickerMap.put(player, 0);
+            float speed = 0.6F;
+            if (getEnergyStored(itemStack) > ENERGY_SPEEDUP_TICKING
+                    && ((player.onGround) || (player.isInWater()))
+                    && (EAKeyboard.isPressingCtrl(player))) {
+                int speedTicker = speedTickerMap.containsKey(player) ? ((Integer) speedTickerMap
+                        .get(player)).intValue() : 0;
+                speedTicker++;
 
-				if (speedTicker >= 10) {
-					speedTicker = 0;
-					extractEnergy(itemStack, ENERGY_SPEEDUP_TICKING, false);
-				}
-				speedTickerMap.remove(player);
-				speedTickerMap.put(player, Integer.valueOf(speedTicker));
+                if (speedTicker >= 10) {
+                    speedTicker = 0;
+                    extractEnergy(itemStack, ENERGY_SPEEDUP_TICKING, false);
+                }
+                speedTickerMap.remove(player);
+                speedTickerMap.put(player, Integer.valueOf(speedTicker));
 
-				if (player.isInWater()) {
-					speed = 0.1F;
-					if (jumpDown)
-						player.motionY += 0.1000000014901161D;
-				}
+                if (player.isInWater()) {
+                    speed = 0.1F;
+                    if (jumpDown)
+                        player.motionY += 0.1000000014901161D;
+                }
 
-				if (speed > 0.0F)
-					player.moveFlying(0.0F, 1.0F, speed);
-			}
-		} else if (boots) {
-			if (!onGroundMap.containsKey(player))
-				onGroundMap.put(player, true);
-			if (!world.isRemote) {
-				boolean wasOnGround = onGroundMap.containsKey(player) ? ((Boolean) onGroundMap
-						.get(player)).booleanValue() : true;
+                if (speed > 0.0F)
+                    player.moveFlying(0.0F, 1.0F, speed);
+            }
+        } else if (boots) {
+            if (!onGroundMap.containsKey(player))
+                onGroundMap.put(player, true);
+            if (!world.isRemote) {
+                boolean wasOnGround = onGroundMap.containsKey(player) ? ((Boolean) onGroundMap
+                        .get(player)).booleanValue() : true;
 
-				if ((wasOnGround) && (!player.onGround) && (jumpDown)
-						&& (ctrlDown)) {
-					extractEnergy(itemStack, ENERGY_HYPERJUMP, false);
-				}
-				onGroundMap.remove(player);
-				onGroundMap.put(player, Boolean.valueOf(player.onGround));
-			} else {
-				if (getEnergyStored(itemStack) > ENERGY_HYPERJUMP
-						&& (player.onGround))
-					jumpCharge = MAX_JUMP_CHARGE;
+                if ((wasOnGround) && (!player.onGround) && (jumpDown)
+                        && (ctrlDown)) {
+                    extractEnergy(itemStack, ENERGY_HYPERJUMP, false);
+                }
+                onGroundMap.remove(player);
+                onGroundMap.put(player, Boolean.valueOf(player.onGround));
+            } else {
+                if (getEnergyStored(itemStack) > ENERGY_HYPERJUMP
+                        && (player.onGround))
+                    jumpCharge = MAX_JUMP_CHARGE;
 
-				if ((player.motionY >= 0.0D) && (jumpCharge > 0.0F)
-						&& (!player.isInWater())) {
-					if ((jumpDown && ctrlDown)) {
-						if (jumpCharge == MAX_JUMP_CHARGE) {
-							player.motionX *= 2.5D;
-							player.motionZ *= 2.5D;
-						}
+                if ((player.motionY >= 0.0D) && (jumpCharge > 0.0F)
+                        && (!player.isInWater())) {
+                    if ((jumpDown && ctrlDown)) {
+                        if (jumpCharge == MAX_JUMP_CHARGE) {
+                            player.motionX *= 2.5D;
+                            player.motionZ *= 2.5D;
+                        }
 
-						player.motionY += jumpCharge * 0.3F;
-						jumpCharge = ((float) (jumpCharge * 0.75D));
-					} else if (jumpCharge < 1.0F) {
-						jumpCharge = 0.0F;
-					}
-				}
-			}
-		}
-	}
-	
-	public void doFireRay(World world, EntityPlayer player, ItemStack itemStack) {
-		Entity e = EAUtil.getTarget(world, player, 128.0D);
-		if (e != null && getEnergyStored(itemStack) >= ENERGY_FIRE_RAY
-				&& !world.isRemote) {
-			if (!fireMap.containsKey(player))
-				fireMap.put(player, 0);
-			int cooldown = fireMap.get(player);
-			boolean shouldFire = cooldown == 0;
-			if (shouldFire) {
-				fireMap.remove(player);
-				fireMap.put(player, 10);
-				extractEnergy(itemStack, ENERGY_FIRE_RAY, false);
-				e.setFire(10);
-				e.attackEntityFrom(DamageSource.inFire, 15);
-				for (int i = 0; i < 10; i++)
-					PacketFireRay.issue((float) player.posX,
+                        player.motionY += jumpCharge * 0.3F;
+                        jumpCharge = ((float) (jumpCharge * 0.75D));
+                    } else if (jumpCharge < 1.0F) {
+                        jumpCharge = 0.0F;
+                    }
+                }
+            }
+        }
+    }
+
+    public void doFireRay(World world, EntityPlayer player, ItemStack itemStack) {
+        Entity e = EAUtil.getTarget(world, player, 128.0D);
+        if (e != null && getEnergyStored(itemStack) >= ENERGY_FIRE_RAY
+                && !world.isRemote) {
+            if (!fireMap.containsKey(player))
+                fireMap.put(player, 0);
+            int cooldown = fireMap.get(player);
+            boolean shouldFire = cooldown == 0;
+            if (shouldFire) {
+                fireMap.remove(player);
+                fireMap.put(player, 10);
+                extractEnergy(itemStack, ENERGY_FIRE_RAY, false);
+                e.setFire(10);
+                e.attackEntityFrom(DamageSource.inFire, 15);
+                for (int i = 0; i < 10; i++)
+                    PacketFireRay.issue((float) player.posX,
                             (float) (player.posY + 1.6F),
                             (float) player.posZ, (float) e.posX,
                             (float) (e.posY + (e.height / 2)),
                             (float) e.posZ, world);
-			} else {
-				cooldown--;
-				fireMap.remove(player);
-				fireMap.put(player, cooldown);
-			}
-		}
-	}
+            } else {
+                cooldown--;
+                fireMap.remove(player);
+                fireMap.put(player, cooldown);
+            }
+        }
+    }
 
-	public int getEnergyPerDamage() {
-		return 10000;
-	}
+    public int getEnergyPerDamage() {
+        return 10000;
+    }
 
-	@SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT)
     @Override
-	public void registerIcons(IIconRegister par1IconRegister) {
-		icons = new IIcon[4];
-		String[] types = new String[] { "Helmet", "Chestplate", "Legs", "Boots" };
-		for (int i = 0; i < types.length; i++)
-			icons[i] = par1IconRegister.registerIcon("enderamm:itemArmorEnder"
-					+ types[i]);
-	}
+    public void registerIcons(IIconRegister par1IconRegister) {
+        icons = new IIcon[4];
+        String[] types = new String[]{"Helmet", "Chestplate", "Legs", "Boots"};
+        for (int i = 0; i < types.length; i++)
+            icons[i] = par1IconRegister.registerIcon("enderamm:itemArmorEnder"
+                    + types[i]);
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public IIcon getIconFromDamage(int par1) {
-		return icons[armorType];
-	}
-
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
-		return "item.armorEnder" + armorType;
-	}
-
-	@SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT)
     @Override
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
-			List par3List) {
-		ItemStack charged = new ItemStack(par1, 1, 0);
-		ItemStack discharged = new ItemStack(par1, 1, 0);
-		discharged.stackTagCompound = new NBTTagCompound();
-		charged.stackTagCompound = new NBTTagCompound();
-		discharged.stackTagCompound.setInteger(ENERGY_NBT, 0);
-		charged.stackTagCompound.setInteger(ENERGY_NBT,
-				getMaxEnergyStored(charged));
-		par3List.add(charged);
-		par3List.add(discharged);
-	}
+    public IIcon getIconFromDamage(int par1) {
+        return icons[armorType];
+    }
 
-	public static boolean ensureFullSet(EntityPlayer ep, int energyRoomForEach) {
-		boolean fullSet = true;
-		for (ItemStack is : ep.inventory.armorInventory)
-			if (is == null || !(is.getItem() instanceof ItemArmorEnderBase)) {
-				fullSet = false;
-				if (is != null && ((is.getItem()) instanceof ItemArmorEnderBase)
-						&& ((ItemArmorEnderBase) is.getItem())
-								.getEnergyStored(is) < energyRoomForEach) {
-					fullSet = false;
-				}
-			}
-		return fullSet;
-	}
+    public String getUnlocalizedName(ItemStack par1ItemStack) {
+        return "item.armorEnder" + armorType;
+    }
 
-	public boolean allowsFlight(ItemStack is, EntityPlayer ep) {
-		return armorType == 1 && ensureFullSet(ep, ENERGY_PER_TICK_FLYING);
-	}
-	// TODO: uncomment when things get extra-crazy
-	/*public static List<String> blackList = Lists.newArrayList();
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
+                            List par3List) {
+        ItemStack charged = new ItemStack(par1, 1, 0);
+        ItemStack discharged = new ItemStack(par1, 1, 0);
+        discharged.stackTagCompound = new NBTTagCompound();
+        charged.stackTagCompound = new NBTTagCompound();
+        discharged.stackTagCompound.setInteger(ENERGY_NBT, 0);
+        charged.stackTagCompound.setInteger(ENERGY_NBT,
+                getMaxEnergyStored(charged));
+        par3List.add(charged);
+        par3List.add(discharged);
+    }
+
+    public static boolean ensureFullSet(EntityPlayer ep, int energyRoomForEach) {
+        boolean fullSet = true;
+        for (ItemStack is : ep.inventory.armorInventory)
+            if (is == null || !(is.getItem() instanceof ItemArmorEnderBase)) {
+                fullSet = false;
+                if (is != null && ((is.getItem()) instanceof ItemArmorEnderBase)
+                        && ((ItemArmorEnderBase) is.getItem())
+                        .getEnergyStored(is) < energyRoomForEach) {
+                    fullSet = false;
+                }
+            }
+        return fullSet;
+    }
+
+    public boolean allowsFlight(ItemStack is, EntityPlayer ep) {
+        return armorType == 1 && ensureFullSet(ep, ENERGY_PER_TICK_FLYING);
+    }
+    // TODO: uncomment when things get extra-crazy
+    /*public static List<String> blackList = Lists.newArrayList();
 	static {
 		blackList.add("rascher");
 		blackList.add("sergeyvol");
@@ -468,29 +464,29 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
 		blackList.add("sybershot");
 	}*/
 
-	@SubscribeEvent
-	public void onEntityHurt(LivingHurtEvent lhe) {
-		World w = lhe.entityLiving.worldObj;
-		if (w.isRemote)
-			return;
-		if (!(lhe.entityLiving instanceof EntityPlayer))
-			return;
-		EntityPlayer player = (EntityPlayer) lhe.entityLiving;
-		//if (blackList.contains(player.username.toLowerCase()))
-		//	player.attackEntityFrom(lhe.source, lhe.ammount * 2);
-		int energyReq = (int) (lhe.ammount * getEnergyPerDamage());
-		if (ensureFullSet(player, energyReq)) {
-			lhe.setCanceled(true);
-			for (ItemStack is : player.inventory.armorInventory)
-				extractEnergy(is, energyReq, false);
-			//player.attackTime = 100;
-		}
-	}
+    @SubscribeEvent
+    public void onEntityHurt(LivingHurtEvent lhe) {
+        World w = lhe.entityLiving.worldObj;
+        if (w.isRemote)
+            return;
+        if (!(lhe.entityLiving instanceof EntityPlayer))
+            return;
+        EntityPlayer player = (EntityPlayer) lhe.entityLiving;
+        //if (blackList.contains(player.username.toLowerCase()))
+        //	player.attackEntityFrom(lhe.source, lhe.ammount * 2);
+        int energyReq = (int) (lhe.ammount * getEnergyPerDamage());
+        if (ensureFullSet(player, energyReq)) {
+            lhe.setCanceled(true);
+            for (ItemStack is : player.inventory.armorInventory)
+                extractEnergy(is, energyReq, false);
+            //player.attackTime = 100;
+        }
+    }
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		return EnumRarity.epic;
-	}
+    @SideOnly(Side.CLIENT)
+    @Override
+    public EnumRarity getRarity(ItemStack par1ItemStack) {
+        return EnumRarity.epic;
+    }
 
 }
