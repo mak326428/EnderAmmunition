@@ -79,7 +79,9 @@ public class LogicSlot {
      * @return leftover
      */
     public ItemStack add(ItemStack what, boolean simulate) {
+        if (what == null) return null;
         if (get() != null) {
+            if (get().getItem() == null || what.getItem() == null) return null;
             if (get().getItemDamage() != what.getItemDamage()
                     || get().getItem() != what.getItem()) {
                 return what;

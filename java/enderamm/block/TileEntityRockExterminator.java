@@ -150,8 +150,9 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
 
     public void updateEntity() {
         if (worldObj.isRemote) return;
-        int dim = 3 + getDimensionUpgrades() * 4; // tier 2 is 3 + 2*4 = 11 (11x11xtoBedrock)
+        int dim = 3 + getDimensionUpgrades() * 2; // tier 2 is 3 + 2*4 = 11 (11x11xtoBedrock)
         int blocksPerTick = getSpeedUpgrades();
+
         if (miningAtX == Integer.MIN_VALUE || miningAtY == Integer.MIN_VALUE || miningAtZ == Integer.MIN_VALUE) {
             miningAtX = xCoord - dim / 2;
             miningAtY = yCoord - 1;
@@ -166,6 +167,8 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
         boolean silk = enchantmentMap.containsKey(Enchantment.silkTouch);
         int fortune = enchantmentMap.containsKey(Enchantment.fortune) ? enchantmentMap.get(Enchantment.fortune) : 0;
         int efficiencyDivider = enchantmentMap.containsKey(Enchantment.efficiency) ? enchantmentMap.get(Enchantment.efficiency) + 1 : 1;
+        int energyConsumption = RF_PER_BLOCK / efficiencyDivider;
+        if (storage.getEnergyStored() < energyConsumption * blocksPerTick) return;
         TileEntity inventory = getInventoryAround();
         boolean removeBulk = hasRemoveBulkUpgrade();
         while (blocksPerTick >= 0) {
@@ -186,28 +189,31 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 continue;
             }
             List<ItemStack> drops = removeBlock(fp, worldObj, miningAtX, miningAtY, miningAtZ, fortune, silk);
-            List<ItemStack> clearDrops;
-            if (hasRemoveBulkUpgrade()) {
+            if (drops == null) {
+                blocksPerTick++;
+                continue;
+            } else {
+                storage.extractEnergy(energyConsumption, false);
+            }
+            if (removeBulk) {
                 List<ItemStack> clearedDrops = Lists.newArrayList();
                 for (ItemStack d : drops) {
                     boolean remove = false;
                     for (ItemStack b : bulkItems) {
                         if (b.getItem() == d.getItem() && b.getItemDamage() == d.getItemDamage()) {
                             remove = true;
+                            break;
                         }
-                        break;
                     }
                     if (!remove)
                         clearedDrops.add(d);
                 }
-                clearDrops = clearedDrops;
-            } else {
-                clearDrops = drops;
+                drops = clearedDrops;
             }
             if (inventory == null) {
-                dropAway(clearDrops);
+                dropAway(drops);
             } else {
-                List<ItemStack> leftover = tryToInsertToInventory(clearDrops, inventory);
+                List<ItemStack> leftover = tryToInsertToInventory(drops, inventory);
                 if (leftover != null) dropAway(leftover);
             }
             sendParticlePacket();
@@ -223,7 +229,7 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
 
     public int getSpeedUpgrades() {
         // TODO: read from upgrade slot
-        return 4;
+        return 1;
     }
 
     public boolean hasRemoveBulkUpgrade() {
@@ -239,13 +245,19 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
     }
 
     public void sendParticlePacket() {
-        double xThis = this.xCoord < 0 ? this.xCoord - 0.5D : this.xCoord + 0.5D;
+        /*double xThis = this.xCoord < 0 ? this.xCoord - 0.5D : this.xCoord + 0.5D;
         double yThis = this.yCoord < 0 ? this.yCoord - 0.5D : this.yCoord + 0.5D;
         double zThis = this.zCoord < 0 ? this.zCoord - 0.5D : this.zCoord + 0.5D;
 
         double xTarget = this.miningAtX < 0 ? this.miningAtX - 0.5D : this.miningAtX + 0.5D;
         double yTarget = this.miningAtY < 0 ? this.miningAtY - 0.5D : this.miningAtY + 0.5D;
-        double zTarget = this.miningAtZ < 0 ? this.miningAtZ - 0.5D : this.miningAtZ + 0.5D;
+        double zTarget = this.miningAtZ < 0 ? this.miningAtZ - 0.5D : this.miningAtZ + 0.5D;*/
+        double xThis = xCoord + 0.5D;
+        double yThis = yCoord + 0.5D;
+        double zThis = zCoord + 0.5D;
+        double xTarget = this.miningAtX + 0.5D;
+        double yTarget = this.miningAtY + 0.5D;
+        double zTarget = this.miningAtZ + 0.5D;
 
         PacketFireRay.issue((float) xThis, (float) yThis, (float) zThis, (float) xTarget, (float) yTarget - 1, (float) zTarget, worldObj, 12);
 
@@ -271,8 +283,8 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 toDrop = block.getDrops(world, x, y, z, metadata, 0);
         else
             toDrop = block.getDrops(world, x, y, z, metadata, fortune);
-        world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 16.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-        world.playSoundEffect(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 16.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+        world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 6.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+        world.playSoundEffect(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 6.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
         return toDrop;
     }
 }
