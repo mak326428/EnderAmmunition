@@ -390,7 +390,7 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
                             (float) (player.posY + 1.6F),
                             (float) player.posZ, (float) e.posX,
                             (float) (e.posY + (e.height / 2)),
-                            (float) e.posZ, world);
+                            (float) e.posZ, world, 40);
             } else {
                 cooldown--;
                 fireMap.remove(player);

@@ -1,23 +1,14 @@
 package enderamm;
 
-import java.util.EnumSet;
-
-import enderamm.network.EAPacketHandler;
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 import enderamm.block.BlockHMS;
+import enderamm.block.BlockRockExterminator;
 import enderamm.block.TileEntityHMS;
-import enderamm.item.EAFlightHandler;
-import enderamm.item.EAItemMaterial;
-import enderamm.item.ItemAnnihilationManipulator;
-import enderamm.item.ItemArmorEnderBase;
-import enderamm.item.ItemEnderArrow;
-import enderamm.item.ItemEnderBow;
-import enderamm.item.ItemEnderMagnet;
-import enderamm.item.ItemHealingGem;
-import enderamm.item.ItemWarpGem;
+import enderamm.block.TileEntityRockExterminator;
+import enderamm.item.*;
+import enderamm.network.EAPacketHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 public class EACommonProxy {
@@ -34,6 +25,8 @@ public class EACommonProxy {
     public static ItemEnderBow itemEnderBow;
     public static ItemEnderArrow itemEnderArrow;
     public static BlockHMS blockHMS;
+    public static ItemRFDebug itemRFDebug;
+    public static BlockRockExterminator blockRockExterminator;
 
     public void preInit(Configuration config) {
         ItemAnnihilationManipulator.ALLOW_EXPLOSION = config.get(Configuration.CATEGORY_GENERAL, "allowExplosionFeatures", true, "Toggles the most dangerous features griefing-wise (Annihilation Manipulator's explosion feature, Ender-Infused Explosive Arrows, etc.)").getBoolean(true);
@@ -57,6 +50,8 @@ public class EACommonProxy {
         itemAnnihilationManipulator = new ItemAnnihilationManipulator();
         GameRegistry.registerItem(itemAnnihilationManipulator,
                 "tool_fastbreaker");
+        itemRFDebug = new ItemRFDebug();
+        GameRegistry.registerItem(itemRFDebug, "tool_rf_debug");
         itemHealingGem = new ItemHealingGem();
         GameRegistry.registerItem(itemHealingGem, "tool_healing_gem");
         itemEnderArrow = new ItemEnderArrow();
@@ -68,6 +63,9 @@ public class EACommonProxy {
         blockHMS = new BlockHMS();
         GameRegistry.registerBlock(blockHMS, "block_hms");
         GameRegistry.registerTileEntity(TileEntityHMS.class, "enderamm.block.TileEntityHMS");
+        blockRockExterminator = new BlockRockExterminator();
+        GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
+        GameRegistry.registerTileEntity(TileEntityRockExterminator.class, "enderamm.block.TileEntityRockExterminator");
         EAInit.addRecipes();
     }
 

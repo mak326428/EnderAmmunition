@@ -1,8 +1,10 @@
 package enderamm.item;
 
-import java.util.List;
-import java.util.Random;
-
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -18,12 +20,9 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import cofh.api.energy.IEnergyContainerItem;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.LanguageRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.List;
+import java.util.Random;
 
 public class ItemWarpGem extends Item implements IEnergyContainerItem {
     public static final int ENERGY_STORAGE = 10000000;

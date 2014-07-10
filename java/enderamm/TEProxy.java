@@ -13,7 +13,7 @@ public class TEProxy {
     public static CreativeTabs tabTEBlocks = CreativeTabs.tabBlock;
     public static Fluid fluidRedstone = FluidRegistry.WATER;
     public static Fluid fluidGlowstone = FluidRegistry.LAVA;
-    public static Fluid fluidEnder = FluidRegistry.getFluid("oil");
+    public static Fluid fluidEnder = FluidRegistry.WATER;
 
     public static final String NBT_ENERGY_TAG = "Energy";
 

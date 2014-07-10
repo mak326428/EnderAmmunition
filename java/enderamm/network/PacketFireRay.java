@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 public class PacketFireRay extends IPacket {
 
     public float sX, sY, sZ, tX, tY, tZ;
+    public int duration;
 
     @Override
     public void read(DataInputStream bytes) throws Throwable {
@@ -31,6 +32,7 @@ public class PacketFireRay extends IPacket {
         tX = bytes.readFloat();
         tY = bytes.readFloat();
         tZ = bytes.readFloat();
+        duration = bytes.readInt();
     }
 
     @Override
@@ -41,6 +43,7 @@ public class PacketFireRay extends IPacket {
         bytes.writeFloat(tX);
         bytes.writeFloat(tY);
         bytes.writeFloat(tZ);
+        bytes.writeInt(duration);
     }
 
     @Override
@@ -49,12 +52,12 @@ public class PacketFireRay extends IPacket {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             World w = Minecraft.getMinecraft().theWorld;
             FireRayFX pe = new FireRayFX(w, sX, sY, sZ, tX, tY, tZ, 48, 141,
-                    255, 40);
+                    255, duration);
             Minecraft.getMinecraft().effectRenderer.addEffect(pe);
         }
     }
 
-    public static void issue(float sX, float sY, float sZ, float tX, float tY, float tZ, World world) {
+    public static void issue(float sX, float sY, float sZ, float tX, float tY, float tZ, World world, int duration) {
         PacketFireRay pfr = new PacketFireRay();
         pfr.sX = sX;
         pfr.sY = sY;
@@ -62,6 +65,7 @@ public class PacketFireRay extends IPacket {
         pfr.tX = tX;
         pfr.tY = tY;
         pfr.tZ = tZ;
+        pfr.duration = duration;
         EAPacketHandler.sendToAllAround(pfr, new NetworkRegistry.TargetPoint(world.provider.dimensionId, (double) sX, (double) sY, (double) sZ, 256.0D));
     }
 }
