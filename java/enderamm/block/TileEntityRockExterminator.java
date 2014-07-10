@@ -5,6 +5,7 @@ import cofh.api.energy.IEnergyHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
+import enderamm.LogicSlot;
 import enderamm.network.PacketFireRay;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
@@ -16,6 +17,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -88,14 +90,46 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
         return null;
     }
 
+    public void dropStackInWorld(World par1World, float par2, float par3, float par4,
+                                 ItemStack par5ItemStack) {
+        if (!par1World.isRemote
+                && par1World.getGameRules().getGameRuleBooleanValue(
+                "doTileDrops")) {
+            float f = 0.7F;
+            double d0 = (double) (par1World.rand.nextFloat() * f)
+                    + (double) (1.0F - f) * 0.5D;
+            double d1 = (double) (par1World.rand.nextFloat() * f)
+                    + (double) (1.0F - f) * 0.5D;
+            double d2 = (double) (par1World.rand.nextFloat() * f)
+                    + (double) (1.0F - f) * 0.5D;
+            EntityItem entityitem = new EntityItem(par1World, (double) par2
+                    + d0, (double) par3 + d1, (double) par4 + d2, par5ItemStack);
+            entityitem.delayBeforeCanPickup = 10;
+            par1World.spawnEntityInWorld(entityitem);
+        }
+    }
+
+    public void dropAway(List<ItemStack> stacks) {
+        for (ItemStack stack : stacks)
+            dropStackInWorld(worldObj, xCoord + 0.5F, yCoord + 1.5F, zCoord + 0.5F, stack);
+
+    }
+
     public List<ItemStack> tryToInsertToInventory(List<ItemStack> itemStackList, TileEntity te) {
         if (!(te instanceof IInventory)) return itemStackList;
         IInventory inv = (IInventory) te;
         Queue<ItemStack> stackQueue = new ArrayDeque<ItemStack>(itemStackList);
+        LogicSlot[] slots = new LogicSlot[inv.getSizeInventory()];
         for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack stackInISlot = inv.getStackInSlot(i);
-            if (stackInISlot == null) {
-
+            slots[i] = new LogicSlot(inv, i);
+        }
+        // TODO: check this, might be a bit of an overkill (performance-wise)
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            for (int j = 0; j < slots.length; j++) {
+                if (stackQueue.size() == 0) break;
+                ItemStack peek = stackQueue.poll();
+                ItemStack leftover = slots[j].add(peek, false);
+                if (leftover != null) stackQueue.add(leftover);
             }
         }
         return new ArrayList<ItemStack>(stackQueue);
@@ -111,9 +145,8 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
             miningAtZ = zCoord - dim / 2;
         }
         if (fp == null && worldObj instanceof WorldServer) {
-            fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID().toString(), "[EA]"));
+            fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID().toString(), "[EnderAmmunition]"));
         }
-
         if (miningAtY <= 1) return;
         // TODO; checks for energy / can mine that block here / particles etc.
         // TODO: try to compress the particle packets
@@ -142,7 +175,12 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 continue;
             }
             List<ItemStack> drops = removeBlock(fp, worldObj, miningAtX, miningAtY, miningAtZ, fortune, silk);
-            // TODO add to inventory
+            if (inventory == null) {
+                dropAway(drops);
+            } else {
+                List<ItemStack> leftover = tryToInsertToInventory(drops, inventory);
+                if (leftover != null) dropAway(leftover);
+            }
             sendParticlePacket();
             blocksPerTick--;
         }
