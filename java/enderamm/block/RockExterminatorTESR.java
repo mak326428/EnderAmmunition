@@ -17,7 +17,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
     public IModelCustom model;
 
     public RockExterminatorTESR() {
-        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator.obj"));
+        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator2.obj"));
     }
 
     public static final ResourceLocation CORE_TEXTURE = new ResourceLocation(
@@ -34,24 +34,35 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
         // GL11.glTranslatef((float) x + 0.5F, (float) y + 1.5F, (float) z +
         // 0.5F);
         GL11.glTranslatef((float) x + 1F, (float) y + 1F, (float) z + 1F);
-        GL11.glScalef(1F, 1F, 1F);
+        GL11.glScalef(10F, 10F, 10F);
         // This is the texture of your block. It's pathed to be the same place
         // as your other blocks here.
         // BIND TEXTURE HERE
-        FMLClientHandler.instance().getClient().renderEngine
-                .bindTexture(CORE_TEXTURE);
+        GL11.glPushMatrix();
         // This rotation part is very important! Without it, your model will
         // render upside-down! And for some reason you DO need PushMatrix again!
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        model.renderPart("Sphere01");
-        GL11.glDisable(GL11.GL_BLEND);
         FMLClientHandler.instance().getClient().renderEngine
                 .bindTexture(WALLS_TEXTURE);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        model.renderAllExcept("Sphere01");
-        GL11.glDisable(GL11.GL_BLEND);
+        {
+            GL11.glEnable(GL11.GL_BLEND);
+            {
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                model.renderAllExcept("Sphere01");
+            }
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+
+        FMLClientHandler.instance().getClient().renderEngine
+                .bindTexture(CORE_TEXTURE);
+        {
+            GL11.glEnable(GL11.GL_BLEND);
+            {
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                model.renderPart("Sphere01");
+            }
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+
         GL11.glPopMatrix();
         GL11.glPopMatrix();
     }

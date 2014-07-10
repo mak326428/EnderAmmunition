@@ -34,4 +34,19 @@ public class BlockRockExterminator extends BlockContainer {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileEntityRockExterminator();
     }
+
+    @Override
+    public int getRenderType() {
+        return -1;
+    }
+
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 }
