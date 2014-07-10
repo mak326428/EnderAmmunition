@@ -4,6 +4,7 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import enderamm.LogicSlot;
 import enderamm.network.PacketFireRay;
@@ -135,6 +136,18 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
         return new ArrayList<ItemStack>(stackQueue);
     }
 
+    public static Set<ItemStack> bulkItems = Sets.newHashSet();
+
+    static {
+        bulkItems.add(new ItemStack(Blocks.cobblestone));
+        bulkItems.add(new ItemStack(Blocks.grass));
+        bulkItems.add(new ItemStack(Blocks.dirt));
+        bulkItems.add(new ItemStack(Blocks.gravel));
+        bulkItems.add(new ItemStack(Blocks.sand));
+        bulkItems.add(new ItemStack(Blocks.stone));
+
+    }
+
     public void updateEntity() {
         if (worldObj.isRemote) return;
         int dim = 3 + getDimensionUpgrades() * 4; // tier 2 is 3 + 2*4 = 11 (11x11xtoBedrock)
@@ -148,15 +161,13 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
             fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID().toString(), "[EnderAmmunition]"));
         }
         if (miningAtY <= 1) return;
-        // TODO; checks for energy / can mine that block here / particles etc.
-        // TODO: try to compress the particle packets
-        // TODO (either in fact compress them or pack into one big packet and then compress
-        // TODO (send 1 big compressed packet instead of many small ones)
+        // TODO: energy consumption (taking eff and unbrk in account)
         Map<Enchantment, Integer> enchantmentMap = getEnchantmentMap();
         boolean silk = enchantmentMap.containsKey(Enchantment.silkTouch);
         int fortune = enchantmentMap.containsKey(Enchantment.fortune) ? enchantmentMap.get(Enchantment.fortune) : 0;
         int efficiencyDivider = enchantmentMap.containsKey(Enchantment.efficiency) ? enchantmentMap.get(Enchantment.efficiency) + 1 : 1;
         TileEntity inventory = getInventoryAround();
+        boolean removeBulk = hasRemoveBulkUpgrade();
         while (blocksPerTick >= 0) {
             miningAtX++;
             //miningAtZ++;
@@ -175,14 +186,33 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 continue;
             }
             List<ItemStack> drops = removeBlock(fp, worldObj, miningAtX, miningAtY, miningAtZ, fortune, silk);
-            if (inventory == null) {
-                dropAway(drops);
+            List<ItemStack> clearDrops;
+            if (hasRemoveBulkUpgrade()) {
+                List<ItemStack> clearedDrops = Lists.newArrayList();
+                for (ItemStack d : drops) {
+                    boolean remove = false;
+                    for (ItemStack b : bulkItems) {
+                        if (b.getItem() == d.getItem() && b.getItemDamage() == d.getItemDamage()) {
+                            remove = true;
+                        }
+                        break;
+                    }
+                    if (!remove)
+                        clearedDrops.add(d);
+                }
+                clearDrops = clearedDrops;
             } else {
-                List<ItemStack> leftover = tryToInsertToInventory(drops, inventory);
+                clearDrops = drops;
+            }
+            if (inventory == null) {
+                dropAway(clearDrops);
+            } else {
+                List<ItemStack> leftover = tryToInsertToInventory(clearDrops, inventory);
                 if (leftover != null) dropAway(leftover);
             }
             sendParticlePacket();
             blocksPerTick--;
+
         }
     }
 
@@ -194,6 +224,10 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
     public int getSpeedUpgrades() {
         // TODO: read from upgrade slot
         return 4;
+    }
+
+    public boolean hasRemoveBulkUpgrade() {
+        return true;
     }
 
     public Map<Enchantment, Integer> getEnchantmentMap() {
@@ -237,6 +271,8 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 toDrop = block.getDrops(world, x, y, z, metadata, 0);
         else
             toDrop = block.getDrops(world, x, y, z, metadata, fortune);
+        world.playSoundEffect(x + 0.5F, y + 0.5F, z + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 16.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+        world.playSoundEffect(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F, block.stepSound.getBreakSound(), (block.stepSound.getVolume() + 16.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
         return toDrop;
     }
 }

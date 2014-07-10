@@ -97,7 +97,7 @@ public class LogicSlot {
                     return null;
                 } else {
                     ItemStack leftover = what.copy();
-                    leftover.stackSize -= get().stackSize;
+                    leftover.stackSize -= (what.getMaxStackSize() - get().stackSize);
                     if (!simulate) {
                         ItemStack toSet = get().copy();
                         toSet.stackSize = what.getItem().getItemStackLimit(what);
