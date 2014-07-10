@@ -17,7 +17,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
     public IModelCustom model;
 
     public RockExterminatorTESR() {
-        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator3.obj"));
+        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator4.obj"));
     }
 
     public static final ResourceLocation CORE_TEXTURE = new ResourceLocation(
