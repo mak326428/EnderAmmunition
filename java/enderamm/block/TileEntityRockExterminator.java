@@ -2,19 +2,36 @@ package enderamm.block;
 
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.mojang.authlib.GameProfile;
 import enderamm.network.PacketFireRay;
+import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.*;
 
 public class TileEntityRockExterminator extends TileEntity implements IEnergyHandler {
 
     public EnergyStorage storage = new EnergyStorage(1 * 1000 * 1000);
-    public int tier = 5;
     public int miningAtX = Integer.MIN_VALUE;
     public int miningAtY = Integer.MIN_VALUE;
     public int miningAtZ = Integer.MIN_VALUE;
     public static final int RF_PER_BLOCK = 600;
+    public static FakePlayer fp;
 
     public void setEnergyStored(int energy) {
         storage.setEnergyStored(energy);
@@ -60,19 +77,54 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
         nbt.setInteger("miningAtZ", miningAtZ);
     }
 
+    public TileEntity getInventoryAround() {
+        for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+            int xN = xCoord + dir.offsetX;
+            int yN = yCoord + dir.offsetY;
+            int zN = zCoord + dir.offsetZ;
+            TileEntity te = worldObj.getTileEntity(xN, yN, zN);
+            if (te instanceof IInventory) return te;
+        }
+        return null;
+    }
+
+    public List<ItemStack> tryToInsertToInventory(List<ItemStack> itemStackList, TileEntity te) {
+        if (!(te instanceof IInventory)) return itemStackList;
+        IInventory inv = (IInventory) te;
+        Queue<ItemStack> stackQueue = new ArrayDeque<ItemStack>(itemStackList);
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack stackInISlot = inv.getStackInSlot(i);
+            if (stackInISlot == null) {
+
+            }
+        }
+        return new ArrayList<ItemStack>(stackQueue);
+    }
 
     public void updateEntity() {
         if (worldObj.isRemote) return;
-        int dim = 3 + tier * 4; // tier 2 is 3 + 2*4 = 11 (11x11xtoBedrock)
-        int blocksPerTick = 2;
+        int dim = 3 + getDimensionUpgrades() * 4; // tier 2 is 3 + 2*4 = 11 (11x11xtoBedrock)
+        int blocksPerTick = getSpeedUpgrades();
         if (miningAtX == Integer.MIN_VALUE || miningAtY == Integer.MIN_VALUE || miningAtZ == Integer.MIN_VALUE) {
             miningAtX = xCoord - dim / 2;
             miningAtY = yCoord - 1;
             miningAtZ = zCoord - dim / 2;
         }
+        if (fp == null && worldObj instanceof WorldServer) {
+            fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID().toString(), "[EA]"));
+        }
+
         if (miningAtY <= 1) return;
         // TODO; checks for energy / can mine that block here / particles etc.
-        for (int i = 0; i < blocksPerTick; i++) {
+        // TODO: try to compress the particle packets
+        // TODO (either in fact compress them or pack into one big packet and then compress
+        // TODO (send 1 big compressed packet instead of many small ones)
+        Map<Enchantment, Integer> enchantmentMap = getEnchantmentMap();
+        boolean silk = enchantmentMap.containsKey(Enchantment.silkTouch);
+        int fortune = enchantmentMap.containsKey(Enchantment.fortune) ? enchantmentMap.get(Enchantment.fortune) : 0;
+        int efficiencyDivider = enchantmentMap.containsKey(Enchantment.efficiency) ? enchantmentMap.get(Enchantment.efficiency) + 1 : 1;
+        TileEntity inventory = getInventoryAround();
+        while (blocksPerTick >= 0) {
             miningAtX++;
             //miningAtZ++;
             if (miningAtX >= xCoord + dim / 2) {
@@ -83,10 +135,35 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                 miningAtZ = zCoord - dim / 2;
                 miningAtY--;
             }
-
+            Block blockToMine = worldObj.getBlock(miningAtX, miningAtY, miningAtZ);
+            // skip air (like caves) + skip unminable blocks
+            if (blockToMine == Blocks.air || blockToMine.getBlockHardness(worldObj, miningAtX, miningAtY, miningAtZ) < 0) {
+                blocksPerTick++;
+                continue;
+            }
+            List<ItemStack> drops = removeBlock(fp, worldObj, miningAtX, miningAtY, miningAtZ, fortune, silk);
+            // TODO add to inventory
             sendParticlePacket();
-            worldObj.setBlockToAir(miningAtX, miningAtY, miningAtZ);
+            blocksPerTick--;
         }
+    }
+
+    public int getDimensionUpgrades() {
+        // TODO: read from upgrade slot
+        return 6;
+    }
+
+    public int getSpeedUpgrades() {
+        // TODO: read from upgrade slot
+        return 4;
+    }
+
+    public Map<Enchantment, Integer> getEnchantmentMap() {
+        // TODO: read from upgrade slot
+        Map<Enchantment, Integer> map = Maps.newHashMap();
+        map.put(Enchantment.silkTouch, 1);
+        map.put(Enchantment.efficiency, 5);
+        return map;
     }
 
     public void sendParticlePacket() {
@@ -98,6 +175,30 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
         double yTarget = this.miningAtY < 0 ? this.miningAtY - 0.5D : this.miningAtY + 0.5D;
         double zTarget = this.miningAtZ < 0 ? this.miningAtZ - 0.5D : this.miningAtZ + 0.5D;
 
-        PacketFireRay.issue((float)xThis, (float)yThis, (float)zThis, (float)xTarget, (float)yTarget - 1, (float)zTarget, worldObj, 12);
+        PacketFireRay.issue((float) xThis, (float) yThis, (float) zThis, (float) xTarget, (float) yTarget - 1, (float) zTarget, worldObj, 12);
+
+    }
+
+    public List<ItemStack> removeBlock(EntityPlayer player, World world, int x, int y,
+                                       int z, int fortune, boolean silktouch) {
+        if (world.isAirBlock(x, y, z))
+            return null;
+        Block block = world.getBlock(x, y, z);
+        int metadata = world.getBlockMetadata(x, y, z);
+        if (block == null)
+            return null;
+        if (block.getBlockHardness(world, x, y, z) < 0)
+            return null;
+        if (!block.removedByPlayer(world, player, x, y, z))
+            return null;
+        List<ItemStack> toDrop = Lists.newArrayList();
+        if (silktouch)
+            if (block.canSilkHarvest(world, player, x, y, z, metadata))
+                toDrop.add(new ItemStack(block, 1, metadata));
+            else
+                toDrop = block.getDrops(world, x, y, z, metadata, 0);
+        else
+            toDrop = block.getDrops(world, x, y, z, metadata, fortune);
+        return toDrop;
     }
 }
