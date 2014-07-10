@@ -25,7 +25,7 @@ public class BlockRockExterminator extends BlockContainer {
         this.setHardness(6.0F);
         this.setBlockBounds(0F, 0F, 0F, 1F, 1F, 1F);
         this.setBlockName("rock_exterminator");
-        LanguageRegistry.instance().addStringLocalization("tile.hms.name",
+        LanguageRegistry.instance().addStringLocalization("tile.rock_exterminator.name",
                 "Rock Exterminator");
         setHarvestLevel("pickaxe", 3);
     }
