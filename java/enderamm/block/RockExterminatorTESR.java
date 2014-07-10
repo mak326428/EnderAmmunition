@@ -17,7 +17,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
     public IModelCustom model;
 
     public RockExterminatorTESR() {
-        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator2.obj"));
+        model = new WavefrontObject(new ResourceLocation("enderamm", "misc/rock_exterminator3.obj"));
     }
 
     public static final ResourceLocation CORE_TEXTURE = new ResourceLocation(
@@ -42,6 +42,17 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
         // This rotation part is very important! Without it, your model will
         // render upside-down! And for some reason you DO need PushMatrix again!
         FMLClientHandler.instance().getClient().renderEngine
+                .bindTexture(CORE_TEXTURE);
+        {
+            GL11.glEnable(GL11.GL_BLEND);
+            {
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                model.renderPart("Sphere01");
+            }
+            GL11.glDisable(GL11.GL_BLEND);
+        }
+
+        FMLClientHandler.instance().getClient().renderEngine
                 .bindTexture(WALLS_TEXTURE);
         {
             GL11.glEnable(GL11.GL_BLEND);
@@ -52,16 +63,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_BLEND);
         }
 
-        FMLClientHandler.instance().getClient().renderEngine
-                .bindTexture(CORE_TEXTURE);
-        {
-            GL11.glEnable(GL11.GL_BLEND);
-            {
-                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                model.renderPart("Sphere01");
-            }
-            GL11.glDisable(GL11.GL_BLEND);
-        }
+
 
         GL11.glPopMatrix();
         GL11.glPopMatrix();
