@@ -6,9 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
-import enderamm.block.HMSTESR;
-import enderamm.block.ItemRendererHMS;
-import enderamm.block.TileEntityHMS;
+import enderamm.block.*;
 import enderamm.item.ItemArmorEnderBase;
 import enderamm.network.PacketKeyUpdate;
 import net.minecraft.client.Minecraft;
@@ -58,6 +56,10 @@ public class EAClientProxy extends EACommonProxy {
                 new HMSTESR());
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(
                 EACommonProxy.blockHMS), new ItemRendererHMS());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRockExterminator.class,
+                new RockExterminatorTESR());
+        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(
+                EACommonProxy.blockRockExterminator), new ItemRendererRockExterminator());
     }
 
     @SubscribeEvent
