@@ -22,7 +22,7 @@ group= "enderamm" // http://maven.apache.org/guides/mini/guide-naming-convention
 archivesBaseName = "EnderAmmunition"
 
 minecraft {
-    version = "1.7.2-10.12.0.1053"
+    version = "1.7.2-10.12.0.1147"
     assetDir = "eclipse/assets"
 }
 processResources
