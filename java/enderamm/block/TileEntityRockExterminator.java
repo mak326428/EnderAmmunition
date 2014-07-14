@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
@@ -185,12 +186,12 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
             Block blockToMine = worldObj.getBlock(miningAtX, miningAtY, miningAtZ);
             // skip air (like caves) + skip unminable blocks
             if (blockToMine == Blocks.air || blockToMine.getBlockHardness(worldObj, miningAtX, miningAtY, miningAtZ) < 0) {
-                blocksPerTick++;
+
                 continue;
             }
             List<ItemStack> drops = removeBlock(fp, worldObj, miningAtX, miningAtY, miningAtZ, fortune, silk);
             if (drops == null) {
-                blocksPerTick++;
+
                 continue;
             } else {
                 storage.extractEnergy(energyConsumption, false);
@@ -205,6 +206,7 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                             break;
                         }
                     }
+                    CompressedStreamTools
                     if (!remove)
                         clearedDrops.add(d);
                 }

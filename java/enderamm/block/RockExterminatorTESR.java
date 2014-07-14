@@ -52,7 +52,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_BLEND);
         }
 
-        FMLClientHandler.instance().getClient().renderEngine
+       /* FMLClientHandler.instance().getClient().renderEngine
                 .bindTexture(WALLS_TEXTURE);
         {
             GL11.glEnable(GL11.GL_BLEND);
@@ -61,7 +61,7 @@ public class RockExterminatorTESR extends TileEntitySpecialRenderer {
                 model.renderAllExcept("Sphere01");
             }
             GL11.glDisable(GL11.GL_BLEND);
-        }
+        }*/
 
 
 
