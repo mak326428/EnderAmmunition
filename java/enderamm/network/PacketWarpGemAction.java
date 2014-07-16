@@ -24,15 +24,16 @@ import java.io.DataOutputStream;
 public class PacketWarpGemAction extends IPacket {
     /*
     * Action ID list:
-    * 0 = add new waypoint (client -> server; actionData: x, y, z, pitch, yaw, waypoint_name)
+    * 0 = add new waypoint (client -> server; actionData: waypoint_name)
     * 1 = teleport (client -> server; actionData: waypoint_name)
     * 2 = remove waypoint (client -> server; actionData: waypoint_name)
+    * 3 = server -> client error (server -> client; actionData: errorCode: { 0 = such thing already exists; 1 = not enough energy; 2 = wrong dimension })
     * All data is stored in NBT and thus synchronized
     * between client and server, thus there's no point in
     * traversing data manually
     */
-    int actionID;
-    NBTTagCompound actionData;
+    public int actionID;
+    public NBTTagCompound actionData;
 
     @Override
     public void read(DataInputStream bytes) throws Throwable {
