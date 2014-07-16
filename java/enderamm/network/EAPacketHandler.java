@@ -28,6 +28,7 @@ public class EAPacketHandler {
         registerPacketType(PacketFireRay.class);
         registerPacketType(PacketFlightStatusUpdate.class);
         registerPacketType(PacketKeyUpdate.class);
+        registerPacketType(PacketRenderDebug.class);
         channels = NetworkRegistry.INSTANCE.newChannel("enderamm",
                 new EAChannelHandler());
     }

@@ -1,6 +1,7 @@
 package enderamm;
 
 import enderamm.item.ItemWarpGem;
+import enderamm.item.WarpGemEffectHelper;
 
 public class GradientColorTransformer implements IColorTransformer {
 
@@ -18,7 +19,7 @@ public class GradientColorTransformer implements IColorTransformer {
 
     @Override
     public int getColor() {
-        return ItemWarpGem.interpolateColor(fColor, sColor, period, maxPeriod);
+        return WarpGemEffectHelper.interpolateColor(fColor, sColor, period, maxPeriod);
     }
 
     @Override

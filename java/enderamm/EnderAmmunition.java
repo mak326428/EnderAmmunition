@@ -9,6 +9,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.config.Configuration;
 
 //import cpw.mods.fml.common.network.NetworkMod;
@@ -49,6 +52,12 @@ public class EnderAmmunition {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         PROXY.postInit();
+    }
+
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        ((ServerCommandManager) MinecraftServer.getServer().getCommandManager())
+                .registerCommand(new CommandDebugRender());
     }
 
 }

@@ -8,6 +8,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import enderamm.block.*;
 import enderamm.item.ItemArmorEnderBase;
+import enderamm.item.ItemRendererWarpGem;
 import enderamm.network.PacketKeyUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -60,6 +61,8 @@ public class EAClientProxy extends EACommonProxy {
                 new RockExterminatorTESR());
         MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(
                 EACommonProxy.blockRockExterminator), new ItemRendererRockExterminator());
+        MinecraftForgeClient.registerItemRenderer(EACommonProxy.itemWarpGem, new ItemRendererWarpGem());
+
     }
 
     @SubscribeEvent

@@ -206,7 +206,6 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
                             break;
                         }
                     }
-                    CompressedStreamTools
                     if (!remove)
                         clearedDrops.add(d);
                 }

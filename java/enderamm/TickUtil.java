@@ -1,6 +1,7 @@
 package enderamm;
 
 import enderamm.item.ItemWarpGem;
+import enderamm.item.WarpGemEffectHelper;
 
 public class TickUtil {
     /**
@@ -22,7 +23,7 @@ public class TickUtil {
     }
 
     public static void onRenderTick() {
-        ItemWarpGem.generateWarpGemColor();
+        WarpGemEffectHelper.generateWarpGemColor();
         ColorRegistry.updateGlobal();
     }
 }
