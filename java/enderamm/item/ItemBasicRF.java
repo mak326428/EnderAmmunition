@@ -69,7 +69,7 @@ public class ItemBasicRF extends Item implements IEnergyContainerItem {
 
     public double getDurabilityForDisplay(ItemStack stack)
     {
-        return (double)getEnergyStored(stack) / ((double)storage + 1.0D);
+        return 1.0D - (double)getEnergyStored(stack) / ((double)storage + 1.0D);
     }
 
     @Override

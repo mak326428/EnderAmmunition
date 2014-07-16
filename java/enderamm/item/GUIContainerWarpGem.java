@@ -1,6 +1,8 @@
 package enderamm.item;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -16,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class GUIContainerWarpGem extends GuiContainer {
 
     private static final ResourceLocation GUI_LOCATION = new ResourceLocation("enderamm", "gui/wgem.png");

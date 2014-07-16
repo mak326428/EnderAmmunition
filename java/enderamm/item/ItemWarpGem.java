@@ -81,7 +81,6 @@ public class ItemWarpGem extends ItemBasicRF {
             if (getAllPoints(warpGemStack).size() < 11)
                 addPoint(warpGemStack, point);
         } else if (actionID == 1) {
-            // TODO teleport
             String waypointName = actionData.getString(NET_NBT_WPOINT_NAME);
             WarpPoint point = getPointByName(warpGemStack, waypointName);
             if (point == null) {
@@ -115,7 +114,16 @@ public class ItemWarpGem extends ItemBasicRF {
         }
     }
 
+    enum Error {
+        WP_ALREADY_EXISTS,
+        NOT_ENOUGH_ENERGY,
+        WRONG_DIMENSION,
+        SUCCESSFULLY_TELEPORTED,
+        WP_DOESNT_EXIST
+    }
+
     public void sendServerToClientError(int id, EntityPlayer player) {
+        System.out.println(Error.values()[id]);
         PacketWarpGemAction p = new PacketWarpGemAction();
         p.actionID = 3;
         p.actionData = new NBTTagCompound();
