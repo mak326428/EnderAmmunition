@@ -6,7 +6,10 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.DimensionManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -24,7 +27,7 @@ public class GUIContainerWarpGem extends GuiContainer {
     public Rectangle addButtonRectangle = new Rectangle(139, 40, 16, 16);
     public Rectangle removeButtonRectangle = new Rectangle(155, 40, 16, 16);
     public Rectangle teleportButtonRectangle = new Rectangle(145, 99, 20, 20);
-
+    ItemWarpGem.WarpPoint curSel = null;
 
     public static class ContainerWarpGem extends Container {
         public ContainerWarpGem() {
@@ -55,16 +58,29 @@ public class GUIContainerWarpGem extends GuiContainer {
                 ItemWarpGem.sendRemoveWarpPointRequest(nameTextBox.getText());
             }
         }
-        List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem());
-        int xC = 8;
-        int yC = 58;
-        Rectangle area = new Rectangle(8, 58, 128, 102);
+        // TODO: teleport EXACTLY HERE
+        List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
+        int xC = 10;
+        int yC = 60;
+        Rectangle area = new Rectangle(10, 60, 130, 100);
         if (area.contains(mp)) {
             int yReq = mp.y - yC;
-            int itemID = yReq / 10;
-            this.nameTextBox.setText(list.get(itemID).name);
+            int itemID = yReq / fontRendererObj.FONT_HEIGHT;
+            if (itemID < list.size()) {
+                ItemWarpGem.WarpPoint wp = list.get(itemID);
+                curSel = wp;
+                this.nameTextBox.setText(wp.name);
+            } else {
+                curSel = null;
+            }
+        } else {
+            curSel = null;
         }
-        // TODO: teleport
+        updateButtonState();
+    }
+
+    public ItemStack getStack() {
+        return Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem();
     }
 
     @Override
@@ -75,7 +91,6 @@ public class GUIContainerWarpGem extends GuiContainer {
         int xStartGUI = (this.width - this.xSize) / 2;
         int yStartGUI = (this.height - this.ySize) / 2;
         Point mp = new Point(x - xStartGUI, y - yStartGUI);
-
         if (addButtonEnabled) {
             drawTexturedModalRect(xStartGUI + (int) addButtonRectangle.getX(), yStartGUI + (int) addButtonRectangle.getY(), 208, 128, addButtonRectangle.width, addButtonRectangle.height);
             if (addButtonRectangle.contains(mp))
@@ -86,9 +101,9 @@ public class GUIContainerWarpGem extends GuiContainer {
             if (removeButtonRectangle.contains(mp))
                 drawTexturedModalRect(xStartGUI + (int) removeButtonRectangle.getX(), yStartGUI + (int) removeButtonRectangle.getY(), 224, 144, removeButtonRectangle.width, removeButtonRectangle.height);
         }
-        List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(Minecraft.getMinecraft().thePlayer.inventory.getCurrentItem());
-        int xC = 8;
-        int yC = 58;
+        List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
+        int xC = 10;
+        int yC = 60;
         for (ItemWarpGem.WarpPoint wp : list) {
             fontRendererObj.drawString(wp.name, xStartGUI + xC, yStartGUI + yC, 0xFFFFFF);
             yC += fontRendererObj.FONT_HEIGHT;
@@ -102,18 +117,30 @@ public class GUIContainerWarpGem extends GuiContainer {
         this.nameTextBox.updateCursorCounter();
     }
 
+    public void updateButtonState() {
+        if (this.nameTextBox.getText().trim().equalsIgnoreCase("")) {
+            this.addButtonEnabled = false;
+            this.removeButtonEnabled = false;
+        } else {
+            ItemWarpGem.WarpPoint wp = ItemWarpGem.getPointByName(getStack(), this.nameTextBox.getText());
+            if (wp == null) {
+                this.addButtonEnabled = true;
+                this.removeButtonEnabled = false;
+            } else {
+                this.addButtonEnabled = false;
+                this.removeButtonEnabled = true;
+            }
+        }
+    }
+
     @Override
     protected void keyTyped(char par1, int par2) {
         if (this.nameTextBox.isFocused()) {
             this.nameTextBox.textboxKeyTyped(par1, par2);
             if (this.nameTextBox.getText().trim().equals("")) {
                 this.nameTextBox.setText("");
-                addButtonEnabled = false;
-                removeButtonEnabled = false;
-            } else {
-                addButtonEnabled = true;
-                removeButtonEnabled = true;
             }
+            updateButtonState();
         }
         if (par2 == 1) {
             this.mc.thePlayer.closeScreen();
@@ -152,5 +179,11 @@ public class GUIContainerWarpGem extends GuiContainer {
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        if (curSel != null) {
+            fontRendererObj.drawString("" + EnumChatFormatting.DARK_AQUA + "Dimension: " + DimensionManager.getProvider(curSel.dimID).getDimensionName(), x + 7, y + 7, 0xFFFFFF);
+            fontRendererObj.drawString("" + EnumChatFormatting.DARK_AQUA + "X: " + Math.round(curSel.x) + ", Y: " + Math.round(curSel.y) + ", Z: " + Math.round(curSel.z), x + 7, y + 17, 0xFFFFFF);
+        }
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }
