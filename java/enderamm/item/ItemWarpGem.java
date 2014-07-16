@@ -32,6 +32,8 @@ import java.util.Random;
 public class ItemWarpGem extends ItemBasicRF {
 
     public static final String NET_NBT_WPOINT_NAME = "wpname";
+    public static final String NET_NBT_ERROR_ID = "id";
+
 
     public static final String ITEM_NBT_POINTS_LIST = "wpoints";
     public static final String ITEM_NBT_X = "x";
@@ -63,6 +65,7 @@ public class ItemWarpGem extends ItemBasicRF {
             String waypointName = actionData.getString(NET_NBT_WPOINT_NAME);
             if (getPointByName(warpGemStack, waypointName) != null) {
                 player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_RED + "Warp point with such name already exists"));
+                sendServerToClientError(0, player);
                 return;
             }
             WarpPoint point = new WarpPoint();
@@ -74,7 +77,27 @@ public class ItemWarpGem extends ItemBasicRF {
             point.name = waypointName;
             point.dimID = player.worldObj.provider.dimensionId;
             addPoint(warpGemStack, point);
+        } else if (actionID == 1) {
+            // TODO teleport
+            sendServerToClientError(3, player);
+
+        } else if (actionID == 2) {
+            String wpName = actionData.getString(NET_NBT_WPOINT_NAME);
+            if (getPointByName(warpGemStack, wpName) == null) {
+                player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_RED + "No warp point with such name exists"));
+                sendServerToClientError(4, player);
+                return;
+            }
+            removePointByName(warpGemStack, wpName);
         }
+    }
+
+    public void sendServerToClientError(int id, EntityPlayer player) {
+        PacketWarpGemAction p = new PacketWarpGemAction();
+        p.actionID = 3;
+        p.actionData = new NBTTagCompound();
+        p.actionData.setInteger(NET_NBT_ERROR_ID, id);
+        EAPacketHandler.sendToPlayer(player, p);
     }
 
     public void handlePacketClient(PacketWarpGemAction packet, ItemStack warpGemStack, EntityPlayer player) {
