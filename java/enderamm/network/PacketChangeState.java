@@ -3,7 +3,7 @@ package enderamm.network;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -63,7 +63,7 @@ public class PacketChangeState extends IPacket {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void execute(EntityPlayerMP player) {
+    public void execute(EntityPlayer player) {
         World w = Minecraft.getMinecraft().theWorld;
         TileEntity te = w.getTileEntity(x, y, z);
         if (te != null) {

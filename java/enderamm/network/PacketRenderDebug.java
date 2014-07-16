@@ -1,8 +1,7 @@
 package enderamm.network;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import enderamm.DebugReference;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -44,7 +43,7 @@ public class PacketRenderDebug extends IPacket {
         bytes.writeDouble(rotateZ);
     }
 
-    public void execute(EntityPlayerMP player) {
+    public void execute(EntityPlayer player) {
         // TODO: handle
         DebugReference.translateX = this.translateX;
         DebugReference.translateY = this.translateY;

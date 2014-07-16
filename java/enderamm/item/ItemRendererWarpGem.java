@@ -52,6 +52,7 @@ public class ItemRendererWarpGem implements IItemRenderer {
             GL11.glTranslatef(0.0F + 1F, 0.0F + 1F, 0.0F + 1F);
             GL11.glScalef(1F, 1F, 1F);
         }
+        // TODO: ItemRenderType.EQUIPPED
         // This is the texture of your block. It's pathed to be the same place
         // as your other blocks here.
         // BIND TEXTURE HERE

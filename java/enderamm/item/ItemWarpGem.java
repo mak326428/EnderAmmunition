@@ -7,6 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
+import enderamm.network.PacketWarpGemAction;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,14 @@ public class ItemWarpGem extends ItemBasicRF {
 
     public ItemWarpGem() {
         super(10 * 1000 * 1000, 100000, "Warp Gem", "enderamm:warpGem_main");
+    }
+
+    public void handlePacketServer(PacketWarpGemAction packet, ItemStack warpGemStack, EntityPlayer player) {
+
+    }
+
+    public void handlePacketClient(PacketWarpGemAction packet, ItemStack warpGemStack, EntityPlayer player) {
+
     }
 
 }

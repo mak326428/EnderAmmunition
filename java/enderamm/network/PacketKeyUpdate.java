@@ -1,7 +1,7 @@
 package enderamm.network;
 
 import enderamm.item.ItemArmorEnderBase;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
@@ -43,7 +43,7 @@ public class PacketKeyUpdate extends IPacket {
     }
 
     @Override
-    public void execute(EntityPlayerMP player) {
+    public void execute(EntityPlayer player) {
         if (EAKeyboard.isPressingFire(player) && !fire) {
             ItemStack is = player.inventory.armorInventory[0];
             if (is != null && is.getItem() instanceof ItemArmorEnderBase && ((ItemArmor) is.getItem()).armorType == 0) {

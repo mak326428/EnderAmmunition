@@ -1,5 +1,6 @@
 package enderamm.network;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.io.DataInputStream;
@@ -38,6 +39,6 @@ public abstract class IPacket {
      *
      * @param player
      */
-    public void execute(EntityPlayerMP player) {
+    public void execute(EntityPlayer player) {
     }
 }

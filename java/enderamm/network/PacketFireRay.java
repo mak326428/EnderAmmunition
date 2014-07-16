@@ -6,7 +6,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import enderamm.item.FireRayFX;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 import java.io.DataInputStream;
@@ -48,7 +48,7 @@ public class PacketFireRay extends IPacket {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void execute(EntityPlayerMP ep) {
+    public void execute(EntityPlayer ep) {
         if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             World w = Minecraft.getMinecraft().theWorld;
             FireRayFX pe = new FireRayFX(w, sX, sY, sZ, tX, tY, tZ, 48, 141,

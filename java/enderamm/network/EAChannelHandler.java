@@ -3,8 +3,12 @@ package enderamm.network;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -54,8 +58,15 @@ public class EAChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
         }
         if (!FMLCommonHandler.instance().getEffectiveSide().isClient()) {
             INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-            EntityPlayerMP player = ((NetHandlerPlayServer) netHandler).playerEntity;
+            EntityPlayer player = ((NetHandlerPlayServer) netHandler).playerEntity;
             msg.execute(player);
-        } else msg.execute(null);
+        } else {
+            msg.execute(getClientPlayer());
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public EntityPlayer getClientPlayer() {
+        return Minecraft.getMinecraft().thePlayer;
     }
 }

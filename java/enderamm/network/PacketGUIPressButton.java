@@ -1,6 +1,6 @@
 package enderamm.network;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.WorldServer;
@@ -70,7 +70,7 @@ public class PacketGUIPressButton extends IPacket {
     }
 
     @Override
-    public void execute(EntityPlayerMP player) {
+    public void execute(EntityPlayer player) {
         //System.out.println("Execution of the PacketGUIPressButton");
         //System.out.println(FMLCommonHandler.instance().getEffectiveSide());
         //System.out.println(String.format("x: %d, y: %d, z: %d, dimID: %d, buttonID: %d", x, y, z, dimID, buttonID));

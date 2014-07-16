@@ -4,7 +4,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -41,7 +40,7 @@ public class PacketFlightStatusUpdate extends IPacket {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void execute(EntityPlayerMP par1) {
+    public void execute(EntityPlayer par1) {
         EntityPlayer player = Minecraft.getMinecraft().thePlayer;
         player.capabilities.allowFlying = allow;
         player.capabilities.isFlying = is;
