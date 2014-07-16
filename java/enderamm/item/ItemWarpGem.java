@@ -123,7 +123,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public void sendServerToClientError(int id, EntityPlayer player) {
-        System.out.println(Error.values()[id]);
+        //System.out.println(Error.values()[id]);
         PacketWarpGemAction p = new PacketWarpGemAction();
         p.actionID = 3;
         p.actionData = new NBTTagCompound();
@@ -141,6 +141,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public static WarpPoint getPointByName(ItemStack stack, String name) {
+        if (stack == null || name == null) return null;
         List<WarpPoint> allPoints = getAllPoints(stack);
         for (WarpPoint point : allPoints) {
             if (point.name.equalsIgnoreCase(name)) {
@@ -151,6 +152,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public static void addPoint(ItemStack stack, WarpPoint point) {
+        if (stack == null || point == null) return;
         List<WarpPoint> newPoints = Lists.newArrayList();
         newPoints.addAll(getAllPoints(stack));
         newPoints.add(point);
@@ -158,6 +160,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public static void removePointByName(ItemStack stack, String name) {
+        if (stack == null || name == null) return;
         List<WarpPoint> points = getAllPoints(stack);
         for (int i = 0; i < points.size(); i++) {
             WarpPoint item = points.get(i);
@@ -168,6 +171,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public static List<WarpPoint> getAllPoints(ItemStack stack) {
+        if (stack == null) return Lists.newArrayList();
         if (stack.stackTagCompound == null)
             stack.stackTagCompound = new NBTTagCompound();
         NBTTagList list = stack.stackTagCompound.getTagList(ITEM_NBT_POINTS_LIST, Constants.NBT.TAG_COMPOUND);
@@ -188,6 +192,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     private static void replaceAllPointsWith(ItemStack stack, List<WarpPoint> newList) {
+        if (stack == null || newList == null) return;
         if (stack.stackTagCompound == null)
             stack.stackTagCompound = new NBTTagCompound();
         NBTTagList nbtList = new NBTTagList();
