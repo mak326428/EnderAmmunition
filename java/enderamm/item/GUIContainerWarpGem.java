@@ -51,11 +51,22 @@ public class GUIContainerWarpGem extends GuiContainer {
         if (addButtonEnabled) {
             if (addButtonRectangle.contains(mp)) {
                 ItemWarpGem.sendAddWaypointPacket(nameTextBox.getText());
+                updateButtonState();
+                return;
             }
         }
         if (removeButtonEnabled) {
             if (removeButtonRectangle.contains(mp)) {
                 ItemWarpGem.sendRemoveWarpPointRequest(nameTextBox.getText());
+                updateButtonState();
+                return;
+            }
+        }
+        if (teleportButtonEnabled) {
+            if (teleportButtonRectangle.contains(mp)) {
+                ItemWarpGem.sendTeleportRequest(nameTextBox.getText());
+                updateButtonState();
+                return;
             }
         }
         // TODO: teleport EXACTLY HERE
@@ -101,6 +112,11 @@ public class GUIContainerWarpGem extends GuiContainer {
             if (removeButtonRectangle.contains(mp))
                 drawTexturedModalRect(xStartGUI + (int) removeButtonRectangle.getX(), yStartGUI + (int) removeButtonRectangle.getY(), 224, 144, removeButtonRectangle.width, removeButtonRectangle.height);
         }
+        if (teleportButtonEnabled) {
+            drawTexturedModalRect(xStartGUI + (int) teleportButtonRectangle.getX(), yStartGUI + (int) teleportButtonRectangle.getY(), 208, 192, teleportButtonRectangle.width, teleportButtonRectangle.height);
+            if (teleportButtonRectangle.contains(mp))
+                drawTexturedModalRect(xStartGUI + (int) teleportButtonRectangle.getX(), yStartGUI + (int) teleportButtonRectangle.getY(), 208, 212, teleportButtonRectangle.width, teleportButtonRectangle.height);
+        }
         List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
         int xC = 10;
         int yC = 60;
@@ -109,6 +125,10 @@ public class GUIContainerWarpGem extends GuiContainer {
             yC += fontRendererObj.FONT_HEIGHT;
         }
         this.nameTextBox.drawTextBox();
+        if (curSel != null) {
+            fontRendererObj.drawString("Dimension: " + DimensionManager.getProvider(curSel.dimID).getDimensionName(), xStartGUI + 7, yStartGUI + 7, 4210752);
+            fontRendererObj.drawString("X: " + Math.round(curSel.x) + ", Y: " + Math.round(curSel.y) + ", Z: " + Math.round(curSel.z), xStartGUI + 7, yStartGUI + 17, 4210752);
+        }
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
@@ -121,14 +141,17 @@ public class GUIContainerWarpGem extends GuiContainer {
         if (this.nameTextBox.getText().trim().equalsIgnoreCase("")) {
             this.addButtonEnabled = false;
             this.removeButtonEnabled = false;
+            teleportButtonEnabled = false;
         } else {
-            ItemWarpGem.WarpPoint wp = ItemWarpGem.getPointByName(getStack(), this.nameTextBox.getText());
-            if (wp == null) {
+            curSel = ItemWarpGem.getPointByName(getStack(), this.nameTextBox.getText());
+            if (curSel == null) {
                 this.addButtonEnabled = true;
                 this.removeButtonEnabled = false;
+                teleportButtonEnabled = false;
             } else {
                 this.addButtonEnabled = false;
                 this.removeButtonEnabled = true;
+                teleportButtonEnabled = true;
             }
         }
     }
@@ -162,7 +185,6 @@ public class GUIContainerWarpGem extends GuiContainer {
         this.nameTextBox.setEnableBackgroundDrawing(true);
         this.nameTextBox.setText("");
         this.nameTextBox.setCanLoseFocus(false);
-
     }
 
     public GuiTextField nameTextBox;
@@ -179,11 +201,7 @@ public class GUIContainerWarpGem extends GuiContainer {
         int x = (this.width - this.xSize) / 2;
         int y = (this.height - this.ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        if (curSel != null) {
-            fontRendererObj.drawString("" + EnumChatFormatting.DARK_AQUA + "Dimension: " + DimensionManager.getProvider(curSel.dimID).getDimensionName(), x + 7, y + 7, 0xFFFFFF);
-            fontRendererObj.drawString("" + EnumChatFormatting.DARK_AQUA + "X: " + Math.round(curSel.x) + ", Y: " + Math.round(curSel.y) + ", Z: " + Math.round(curSel.z), x + 7, y + 17, 0xFFFFFF);
-        }
+        updateButtonState();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

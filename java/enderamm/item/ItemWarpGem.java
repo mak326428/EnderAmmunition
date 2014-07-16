@@ -11,6 +11,7 @@ import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import enderamm.network.EAPacketHandler;
 import enderamm.network.PacketWarpGemAction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -34,7 +35,7 @@ public class ItemWarpGem extends ItemBasicRF {
 
     public static final String NET_NBT_WPOINT_NAME = "wpname";
     public static final String NET_NBT_ERROR_ID = "id";
-
+    public static double RF_PER_BLOCK = 1000;
 
     public static final String ITEM_NBT_POINTS_LIST = "wpoints";
     public static final String ITEM_NBT_X = "x";
@@ -56,7 +57,7 @@ public class ItemWarpGem extends ItemBasicRF {
     }
 
     public ItemWarpGem() {
-        super(10 * 1000 * 1000, 100000, "Warp Gem", "enderamm:warpGem_main");
+        super(50 * 1000 * 1000, 100000, "Warp Gem", "enderamm:warpGem_main");
     }
 
     public void handlePacketServer(PacketWarpGemAction packet, ItemStack warpGemStack, EntityPlayer player) {
@@ -77,11 +78,32 @@ public class ItemWarpGem extends ItemBasicRF {
             point.pitch = player.rotationPitch;
             point.name = waypointName;
             point.dimID = player.worldObj.provider.dimensionId;
-            addPoint(warpGemStack, point);
+            if (getAllPoints(warpGemStack).size() < 11)
+                addPoint(warpGemStack, point);
         } else if (actionID == 1) {
             // TODO teleport
+            String waypointName = actionData.getString(NET_NBT_WPOINT_NAME);
+            WarpPoint point = getPointByName(warpGemStack, waypointName);
+            if (point == null) {
+                sendServerToClientError(4, player);
+                return;
+            }
+            if (point.dimID != player.worldObj.provider.dimensionId) {
+                sendServerToClientError(2, player);
+                return;
+            }
+            EAVector3 playerVec = EAVector3.fromEntityCenter(player);
+            EAVector3 targetVec = new EAVector3(point.x, point.y, point.z);
+            double distance = targetVec.subtract(playerVec).mag();
+            int rfCost = (int)Math.round(distance * RF_PER_BLOCK);
+            if (getEnergyStored(warpGemStack) < rfCost) {
+                sendServerToClientError(1, player);
+                return;
+            }
+            extractEnergy(warpGemStack, rfCost, false);
+            player.setPositionAndUpdate(point.x, point.y, point.z);
+            player.setLocationAndAngles(point.x, point.y, point.z, (float)point.yaw, (float)point.pitch);
             sendServerToClientError(3, player);
-
         } else if (actionID == 2) {
             String wpName = actionData.getString(NET_NBT_WPOINT_NAME);
             if (getPointByName(warpGemStack, wpName) == null) {
@@ -101,8 +123,13 @@ public class ItemWarpGem extends ItemBasicRF {
         EAPacketHandler.sendToPlayer(player, p);
     }
 
+    @SideOnly(Side.CLIENT)
     public void handlePacketClient(PacketWarpGemAction packet, ItemStack warpGemStack, EntityPlayer player) {
-
+        if (packet.actionID == 3) {
+            if (packet.actionData.getInteger(NET_NBT_ERROR_ID) == 3) {
+                Minecraft.getMinecraft().displayGuiScreen(null);
+            }
+        }
     }
 
     public static WarpPoint getPointByName(ItemStack stack, String name) {
@@ -124,12 +151,12 @@ public class ItemWarpGem extends ItemBasicRF {
 
     public static void removePointByName(ItemStack stack, String name) {
         List<WarpPoint> points = getAllPoints(stack);
-        int indexToDelete = -1;
         for (int i = 0; i < points.size(); i++) {
             WarpPoint item = points.get(i);
             if (item.name.equalsIgnoreCase(name))
                 points.remove(i);
         }
+        replaceAllPointsWith(stack, points);
     }
 
     public static List<WarpPoint> getAllPoints(ItemStack stack) {
