@@ -6,6 +6,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import enderamm.EnderAmmunition;
 import enderamm.TEProxy;
 import enderamm.network.EAKeyboard;
 import enderamm.network.EAPacketHandler;
@@ -169,7 +170,7 @@ public class ItemWarpGem extends ItemBasicRF {
         stack.getTagCompound().setTag(ITEM_NBT_POINTS_LIST, nbtList);
     }
 
-    public void sendAddWaypointPacket(String name) {
+    public static void sendAddWaypointPacket(String name) {
         PacketWarpGemAction packet = new PacketWarpGemAction();
         packet.actionID = 0;
         packet.actionData = new NBTTagCompound();
@@ -177,7 +178,7 @@ public class ItemWarpGem extends ItemBasicRF {
         EAPacketHandler.sendToServer(packet);
     }
 
-    public void sendTeleportRequest(String name) {
+    public static void sendTeleportRequest(String name) {
         PacketWarpGemAction packet = new PacketWarpGemAction();
         packet.actionID = 1;
         packet.actionData = new NBTTagCompound();
@@ -185,12 +186,20 @@ public class ItemWarpGem extends ItemBasicRF {
         EAPacketHandler.sendToServer(packet);
     }
 
-    public void sendRemoveWarpPointRequest(String name) {
+    public static void sendRemoveWarpPointRequest(String name) {
         PacketWarpGemAction packet = new PacketWarpGemAction();
         packet.actionID = 2;
         packet.actionData = new NBTTagCompound();
         packet.actionData.setString(NET_NBT_WPOINT_NAME, name);
         EAPacketHandler.sendToServer(packet);
+    }
+
+    @Override
+    public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
+        if (par2World.isRemote) {
+            par3EntityPlayer.openGui(EnderAmmunition.instance, 8192, par2World, (int) par3EntityPlayer.posX, (int) par3EntityPlayer.posY, (int) par3EntityPlayer.posZ);
+        }
+        return par1ItemStack;
     }
 
 }
