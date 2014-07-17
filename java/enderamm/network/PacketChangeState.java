@@ -9,8 +9,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 // Server -> Client
 public class PacketChangeState extends IPacket {
@@ -29,7 +33,17 @@ public class PacketChangeState extends IPacket {
         if (length != -1) {
             byte[] data = new byte[length];
             bytes.read(data, 0, length);
-            nbtData = CompressedStreamTools.decompress(data);
+            //nbtData = CompressedStreamTools.decompress(data);
+            ByteArrayInputStream bais = new ByteArrayInputStream(data);
+            DataInputStream dos = new DataInputStream(new GZIPInputStream(bais));
+            try
+            {
+                nbtData = CompressedStreamTools.read(dos);
+            }
+            finally
+            {
+                dos.close();
+            }
         } else {
             nbtData = null;
         }

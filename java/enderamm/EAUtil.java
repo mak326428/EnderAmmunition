@@ -14,7 +14,7 @@ public class EAUtil {
                                    double range) {
         Entity pointedEntity = null;
         double d = range;
-        Vec3 vec3d = Vec3.fakePool.getVecFromPool(entityplayer.posX,
+        Vec3 vec3d = Vec3.createVectorHelper(entityplayer.posX,
                 entityplayer.posY + entityplayer.getEyeHeight(),
                 entityplayer.posZ);
         Vec3 vec3d1 = entityplayer.getLookVec();
@@ -44,12 +44,12 @@ public class EAUtil {
                     //				entity.posY + entity.getEyeHeight(),
                     //				entity.posZ), false, true) == null)) {
                     && (world.rayTraceBlocks(
-                    world.getWorldVec3Pool().getVecFromPool(
+                    Vec3.createVectorHelper(
                             entityplayer.posX,
                             entityplayer.posY
                                     + entityplayer.getEyeHeight(),
                             entityplayer.posZ),
-                    world.getWorldVec3Pool().getVecFromPool(
+                    Vec3.createVectorHelper(
                             entity.posX,
                             entity.posY + entity.getEyeHeight(),
                             entity.posZ), false) == null)) {

@@ -160,7 +160,7 @@ public class TileEntityRockExterminator extends TileEntity implements IEnergyHan
             miningAtZ = zCoord - dim / 2;
         }
         if (fp == null && worldObj instanceof WorldServer) {
-            fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID().toString(), "[EnderAmmunition]"));
+            fp = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID(), "[EnderAmmunition]"));
         }
         if (miningAtY <= 1) return;
         // TODO: energy consumption (taking eff and unbrk in account)

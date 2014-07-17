@@ -10,8 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,7 +48,16 @@ public class PacketWarpGemAction extends IPacket {
         } else {
             byte[] nbtData = new byte[size];
             bytes.read(nbtData);
-            actionData = CompressedStreamTools.decompress(nbtData);
+            ByteArrayInputStream bais = new ByteArrayInputStream(nbtData);
+            DataInputStream dos = new DataInputStream(new GZIPInputStream(bais));
+            try
+            {
+                actionData = CompressedStreamTools.read(dos);
+            }
+            finally
+            {
+                dos.close();
+            }
         }
     }
 
