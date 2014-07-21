@@ -32,39 +32,6 @@ import java.util.Map;
  */
 public class ItemGrowthAccelerator extends ItemBasicRF {
 
-    public static Map<Location, Integer> accelerateQueue = Maps.newHashMap();
-
-    public static class Location {
-        public int dimID, x, y, z;
-    }
-
-    @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            for (Location loc : accelerateQueue.keySet()) {
-                World world = DimensionManager.getWorld(loc.dimID);
-                Block blck = world.getBlock(loc.x, loc.y, loc.z);
-                if (blck != null && blck != Blocks.air) {
-                    for (int i = 0; i < 5; i++)
-                        blck.updateTick(world, loc.x, loc.y, loc.z, itemRand);
-                    for (int i1 = 0; i1 < 10; ++i1) {
-                        double d0 = itemRand.nextGaussian() * 0.02D;
-                        double d1 = itemRand.nextGaussian() * 0.02D;
-                        double d2 = itemRand.nextGaussian() * 0.02D;
-                        PacketSpawnParticle.issue("happyVillager", (double) ((float) loc.x + itemRand.nextFloat()), (double) loc.y + (double) itemRand.nextFloat() * blck.getBlockBoundsMaxY(), (double) ((float) loc.z + itemRand.nextFloat()), d0, d1, d2, world);
-                    }
-                }
-            }
-            Map<Location, Integer> newQ = Maps.newHashMap();
-            for (Map.Entry<Location, Integer> l : accelerateQueue.entrySet()) {
-                if (l.getValue() - 1 > 0)
-                    newQ.put(l.getKey(), l.getValue() - 1);
-            }
-            accelerateQueue.clear();
-            accelerateQueue = newQ;
-        }
-    }
-
     public ItemGrowthAccelerator() {
         super(1000000, 100000, "Growth Accelerator", "enderamm:growth_booster");
         FMLCommonHandler.instance().bus().register(this);
@@ -74,12 +41,15 @@ public class ItemGrowthAccelerator extends ItemBasicRF {
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float argU1, float argU2, float argU3) {
         if (!world.isRemote && draw(stack, 25000)) {
-            Location loc = new Location();
-            loc.dimID = world.provider.dimensionId;
-            loc.x = x;
-            loc.y = y;
-            loc.z = z;
-            accelerateQueue.put(loc, 100);
+            Block blck = world.getBlock(x, y, z);
+            for (int i = 0; i < 400; i++)
+                blck.updateTick(world, x, y, z, itemRand);
+            for (int i1 = 0; i1 < 25; ++i1) {
+                double d0 = itemRand.nextGaussian() * 0.02D;
+                double d1 = itemRand.nextGaussian() * 0.02D;
+                double d2 = itemRand.nextGaussian() * 0.02D;
+                PacketSpawnParticle.issue("happyVillager", (double) ((float) x + itemRand.nextFloat()), (double) y + (double) itemRand.nextFloat() * blck.getBlockBoundsMaxY(), (double) ((float) z + itemRand.nextFloat()), d0, d1, d2, world);
+            }
         }
         player.swingItem();
         return false;
