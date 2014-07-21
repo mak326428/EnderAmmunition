@@ -42,13 +42,15 @@ public class ItemGrowthAccelerator extends ItemBasicRF {
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float argU1, float argU2, float argU3) {
         if (!world.isRemote && draw(stack, 25000)) {
             Block blck = world.getBlock(x, y, z);
-            for (int i = 0; i < 400; i++)
-                blck.updateTick(world, x, y, z, itemRand);
-            for (int i1 = 0; i1 < 25; ++i1) {
-                double d0 = itemRand.nextGaussian() * 0.02D;
-                double d1 = itemRand.nextGaussian() * 0.02D;
-                double d2 = itemRand.nextGaussian() * 0.02D;
-                PacketSpawnParticle.issue("happyVillager", (double) ((float) x + itemRand.nextFloat()), (double) y + (double) itemRand.nextFloat() * blck.getBlockBoundsMaxY(), (double) ((float) z + itemRand.nextFloat()), d0, d1, d2, world);
+            if (blck instanceof IPlantable) {
+                for (int i = 0; i < 400; i++)
+                    blck.updateTick(world, x, y, z, itemRand);
+                for (int i1 = 0; i1 < 25; ++i1) {
+                    double d0 = itemRand.nextGaussian() * 0.02D;
+                    double d1 = itemRand.nextGaussian() * 0.02D;
+                    double d2 = itemRand.nextGaussian() * 0.02D;
+                    PacketSpawnParticle.issue("happyVillager", (double) ((float) x + itemRand.nextFloat()), (double) y + (double) itemRand.nextFloat() * blck.getBlockBoundsMaxY(), (double) ((float) z + itemRand.nextFloat()), d0, d1, d2, world);
+                }
             }
         }
         player.swingItem();
