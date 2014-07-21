@@ -39,6 +39,7 @@ public class EACommonProxy {
     public static BlockHMS blockHMS;
     public static ItemRFDebug itemRFDebug;
     public static BlockRockExterminator blockRockExterminator;
+    public static ItemGrowthAccelerator itemGrowthAccelerator;
 
     public static final boolean DEBUG = true;
 
@@ -135,6 +136,8 @@ public class EACommonProxy {
         GameRegistry.registerItem(itemEnderArrow, "item_ender_arrow");
         itemEnderBow = new ItemEnderBow();
         GameRegistry.registerItem(itemEnderBow, "tool_ender_bow");
+        itemGrowthAccelerator = new ItemGrowthAccelerator();
+        GameRegistry.registerItem(itemGrowthAccelerator, "tool_growth_booster");
         itemEnderMagnet = new ItemEnderMagnet();
         GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
         blockHMS = new BlockHMS();

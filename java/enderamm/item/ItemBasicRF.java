@@ -116,4 +116,12 @@ public class ItemBasicRF extends Item implements IEnergyContainerItem {
         }
         return receive;
     }
+
+    public boolean draw(ItemStack stack, int energy) {
+        if (getEnergyStored(stack) >= energy) {
+            extractEnergy(stack, energy, false);
+            return true;
+        }
+        return false;
+    }
 }
