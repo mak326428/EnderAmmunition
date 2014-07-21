@@ -30,6 +30,7 @@ public class EAPacketHandler {
         registerPacketType(PacketKeyUpdate.class);
         registerPacketType(PacketRenderDebug.class);
         registerPacketType(PacketWarpGemAction.class);
+        registerPacketType(PacketSpawnParticle.class);
         channels = NetworkRegistry.INSTANCE.newChannel("enderamm",
                 new EAChannelHandler());
     }
