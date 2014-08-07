@@ -144,6 +144,7 @@ public class EACommonProxy {
         blockRockExterminator = new BlockRockExterminator();
         GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
         GameRegistry.registerTileEntity(TileEntityRockExterminator.class, "enderamm.block.TileEntityRockExterminator");
+        TEProxy.reflect();
         EAInit.addRecipes();
     }
 

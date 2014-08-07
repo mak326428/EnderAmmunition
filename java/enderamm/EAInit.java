@@ -70,7 +70,7 @@ public class EAInit {
 				8), " M ", "M M", " M ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				EACommonProxy.itemMaterial, 1, 0), "MPM", 'M', matter,
-				'P', "dustPyrotheum"));
+				'P', TEProxy.dustPyrotheum));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				Blocks.obsidian, 24, 0), " M ", "M M", "   ", 'M', matter));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(

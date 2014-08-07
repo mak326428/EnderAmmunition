@@ -25,6 +25,7 @@ public class TEProxy {
     public static ItemStack resonantCapacitor;
     public static final String NBT_ENERGY_TAG = "Energy";
     public static ItemStack bucketPyrotheum;
+    public static ItemStack dustPyrotheum;
 
     public static void setDefaultEnergyTag(ItemStack stack, int energy) {
         if (stack.getTagCompound() == null)
@@ -57,6 +58,7 @@ public class TEProxy {
         tesseract = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockTesseract"));
         resonantEnergyCell = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockCell"), 1, 4);
         resonantCapacitor = new ItemStack((Item)grabStaticField("thermalexpansion.item.TEItems", "itemCapacitor"), 1, 5);
+        dustPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "dustPyrotheum");
     }
 
     public static boolean isEnergyContainerItem(ItemStack stack) {
