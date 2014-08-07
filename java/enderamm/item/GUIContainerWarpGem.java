@@ -105,6 +105,7 @@ public class GUIContainerWarpGem extends GuiContainer {
         int xStartGUI = (this.width - this.xSize) / 2;
         int yStartGUI = (this.height - this.ySize) / 2;
         Point mp = new Point(x - xStartGUI, y - yStartGUI);
+        FMLClientHandler.instance().getClient().renderEngine.bindTexture(GUI_LOCATION);
         if (addButtonEnabled) {
             drawTexturedModalRect(xStartGUI + (int) addButtonRectangle.getX(), yStartGUI + (int) addButtonRectangle.getY(), 208, 128, addButtonRectangle.width, addButtonRectangle.height);
             if (addButtonRectangle.contains(mp))
