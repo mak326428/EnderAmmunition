@@ -31,7 +31,7 @@ public class ItemBasicRF extends Item implements IEnergyContainerItem {
             if (texture != null)
                 this.setTextureName(texture);
         }
-        String name = getClass().getSimpleName().toLowerCase();
+        String name = "ea_" + getClass().getSimpleName().toLowerCase();
         setUnlocalizedName(name);
         LanguageRegistry.instance().addStringLocalization(
                 "item." + name + ".name", localizedName);

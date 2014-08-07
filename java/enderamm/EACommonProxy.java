@@ -39,9 +39,8 @@ public class EACommonProxy {
     public static BlockHMS blockHMS;
     public static ItemRFDebug itemRFDebug;
     public static BlockRockExterminator blockRockExterminator;
-    public static ItemGrowthAccelerator itemGrowthAccelerator;
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public static class RawItemData {
         public final String modId;
@@ -65,7 +64,7 @@ public class EACommonProxy {
                 getUniqueName_Item.setAccessible(true);
                 getUniqueName_Block.setAccessible(true);
             } catch (Exception e) {
-                System.out.println("[Advanced Solar Panels] Reflection failed. This is a fatal error and not recoverable");
+                System.out.println("[EA] Reflection failed. This is a fatal error and not recoverable");
                 throw new RuntimeException(e);
             }
             rawReflectionDone = true;
@@ -85,7 +84,7 @@ public class EACommonProxy {
                 return new RawItemData(ui.modId, ui.name);
             }
         } catch (Throwable t) {
-            System.out.println("[Advanced Solar Panels] Reflection failed. Weird error, report it.");
+            System.out.println("[EA] Reflection failed. Weird error, report it.");
             t.printStackTrace();
             return null;
         }
@@ -106,6 +105,7 @@ public class EACommonProxy {
     }
 
     public void preInit(Configuration config) {
+        TEProxy.reflect();
         ItemAnnihilationManipulator.ALLOW_EXPLOSION = config.get(Configuration.CATEGORY_GENERAL, "allowExplosionFeatures", true, "Toggles the most dangerous features griefing-wise (Annihilation Manipulator's explosion feature, Ender-Infused Explosive Arrows, etc.)").getBoolean(true);
         MinecraftForge.EVENT_BUS.register(new EAFlightHandler());
         MinecraftForge.EVENT_BUS.register(this);
@@ -136,8 +136,6 @@ public class EACommonProxy {
         GameRegistry.registerItem(itemEnderArrow, "item_ender_arrow");
         itemEnderBow = new ItemEnderBow();
         GameRegistry.registerItem(itemEnderBow, "tool_ender_bow");
-        itemGrowthAccelerator = new ItemGrowthAccelerator();
-        GameRegistry.registerItem(itemGrowthAccelerator, "tool_growth_booster");
         itemEnderMagnet = new ItemEnderMagnet();
         GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
         blockHMS = new BlockHMS();
