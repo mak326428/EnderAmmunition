@@ -122,6 +122,13 @@ public class ItemWarpGem extends ItemBasicRF {
         WP_DOESNT_EXIST
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public EnumRarity getRarity(ItemStack stack)
+    {
+        return EnumRarity.epic;
+    }
+
     public void sendServerToClientError(int id, EntityPlayer player) {
         //System.out.println(Error.values()[id]);
         PacketWarpGemAction p = new PacketWarpGemAction();
