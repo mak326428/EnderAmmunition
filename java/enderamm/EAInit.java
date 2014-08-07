@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class EAInit {
@@ -93,12 +94,21 @@ public class EAInit {
         return null;
     }
 
-    public static void addRecipes() {
+    public static void addTransposerFillRecipe(int paramInt, ItemStack paramItemStack1, ItemStack paramItemStack2, FluidStack paramFluidStack, boolean paramBoolean) {
+        try {
+            Class<?> cls = Class.forName("thermalexpansion.util.crafting.TransposerManager");
+            Method m = cls.getMethod("addFillRecipe", int.class, ItemStack.class, ItemStack.class, FluidStack.class, boolean.class);
+            m.invoke(null, paramInt, paramItemStack1, paramItemStack2, paramFluidStack, paramBoolean);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
 
+    public static void addRecipes() {
 		// Glass -> Pyrotheum Lens
-		//TransposerManager.addFillRecipe(40000, new ItemStack(Blocks.glass),
-		//		new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 2),
-		//		new FluidStack(TEFluids.fluidPyrotheum, 8000), false);
+		addTransposerFillRecipe(40000, new ItemStack(Blocks.glass),
+				new ItemStack(EACommonProxy.itemMaterial, 1, 2),
+				new FluidStack(TEProxy.fluidPyrotheum, 8000), false);
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				EACommonProxy.itemMaterial, 1, 1), "NNN", "NNN", "NNN", 'N',
 				new ItemStack(EACommonProxy.itemMaterial, 1, 0)));
@@ -134,10 +144,9 @@ public class EAInit {
 				EACommonProxy.itemEnderMagnet), "EPE", "PRP", "EPE", 'E',
 				new ItemStack(EACommonProxy.itemMaterial, 1, 1), 'R',
 				energyCapacitor, 'P', new ItemStack(Items.ender_pearl)));
-		// GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
-		// EACommonProxy.itemMaterial.itemID, 1, 3), " # ", " # ", '#',
-		// new ItemStack(EACommonProxy.itemMaterial.itemID, 1, 1)));
-		// Warp Gem recipe
+		//GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
+		// EACommonProxy.itemMaterial, 1, 3), " # ", " # ", '#',
+		// new ItemStack(EACommonProxy.itemMaterial, 1, 1)));
 		GameRegistry.addRecipe(new ShapelessRFRecipe(new ItemStack(
 				EACommonProxy.itemWarpGem), new ItemStack(
 				EACommonProxy.itemWarpGem, 1, OreDictionary.WILDCARD_VALUE)));

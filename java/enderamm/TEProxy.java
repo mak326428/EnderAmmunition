@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
@@ -18,9 +19,10 @@ public class TEProxy {
     public static Fluid fluidRedstone;
     public static Fluid fluidGlowstone;
     public static Fluid fluidEnder;
-    public static ItemStack resonantEnergyCell = new ItemStack(Blocks.diamond_block);
-    public static ItemStack tesseract = new ItemStack(Blocks.gold_block);
-    public static ItemStack resonantCapacitor = new ItemStack(Items.ender_pearl);
+    public static Fluid fluidPyrotheum;
+    public static ItemStack resonantEnergyCell;
+    public static ItemStack tesseract;
+    public static ItemStack resonantCapacitor;
     public static final String NBT_ENERGY_TAG = "Energy";
     public static ItemStack bucketPyrotheum;
 
@@ -48,10 +50,13 @@ public class TEProxy {
         fluidRedstone = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidRedstone");
         fluidEnder = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidEnder");
         fluidGlowstone = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidGlowstone");
+        fluidPyrotheum = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidPyrotheum");
         bucketPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "bucketPyrotheum");
         tabTETools = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabTools");
         tabTEBlocks = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabBlocks");
-
+        tesseract = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockTesseract"));
+        resonantEnergyCell = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockCell"), 1, 4);
+        resonantCapacitor = new ItemStack((Item)grabStaticField("thermalexpansion.item.TEItems", "itemCapacitor"), 1, 5);
     }
 
     public static boolean isEnergyContainerItem(ItemStack stack) {
