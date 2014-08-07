@@ -19,6 +19,7 @@ import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -103,6 +104,7 @@ public class ItemWarpGem extends ItemBasicRF {
             player.setPositionAndUpdate(point.x, point.y, point.z);
             player.setLocationAndAngles(point.x, point.y, point.z, (float)point.yaw, (float)point.pitch);
             sendServerToClientError(3, player);
+            player.worldObj.playSoundAtEntity(player, "random.bow", 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));
         } else if (actionID == 2) {
             String wpName = actionData.getString(NET_NBT_WPOINT_NAME);
             if (getPointByName(warpGemStack, wpName) == null) {
