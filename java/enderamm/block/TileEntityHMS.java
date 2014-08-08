@@ -23,7 +23,7 @@ public class TileEntityHMS extends TileEntity implements ISidedInventory,
 
     public static final int FLUID_COST = 1000;
     public static final int RF_PER_TICK = 7500;
-    public static final int OPERATION_TICKS = 1000;
+    public static final int OPERATION_TICKS = 90;
 
     public ItemStack[] inv;
     public EnergyStorage storage;
