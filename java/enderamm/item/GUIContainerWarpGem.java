@@ -9,6 +9,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
@@ -40,6 +42,76 @@ public class GUIContainerWarpGem extends GuiContainer {
         @Override
         public boolean canInteractWith(EntityPlayer var1) {
             return true;
+        }
+
+        public Slot getSlot(int p_75139_1_)
+        {
+            return new Slot(new IInventory() {
+                @Override
+                public int getSizeInventory() {
+                    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public ItemStack getStackInSlot(int p_70301_1_) {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public String getInventoryName() {
+                    return null;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public boolean hasCustomInventoryName() {
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public int getInventoryStackLimit() {
+                    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void markDirty() {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void openInventory() {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public void closeInventory() {
+                    //To change body of implemented methods use File | Settings | File Templates.
+                }
+
+                @Override
+                public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
+                    return false;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            }, 0, 0, 0);
         }
     }
 

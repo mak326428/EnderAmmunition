@@ -158,8 +158,7 @@ public class EACommonProxy {
         blockRockExterminator = new BlockRockExterminator();
         GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
         GameRegistry.registerTileEntity(TileEntityRockExterminator.class, "enderamm.block.TileEntityRockExterminator");
-        TEProxy.reflectPost();
-        EAInit.addRecipes();
+
     }
 
     public void postInit() {
@@ -167,7 +166,8 @@ public class EACommonProxy {
     }
 
     public void init() {
-
+        TEProxy.reflectPost();
+        EAInit.addRecipes();
         // MinecraftForge.EVENT_BUS.register(new EAEventHandler());
     }
 }
