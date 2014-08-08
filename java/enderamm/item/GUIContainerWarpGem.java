@@ -115,6 +115,19 @@ public class GUIContainerWarpGem extends GuiContainer {
             yC += index * fontRendererObj.FONT_HEIGHT;
             drawTexturedModalRect(xStartGUI + xC, yStartGUI + yC, 0, 191, 128, fontRendererObj.FONT_HEIGHT);
         }
+        {
+            xC = 10; yC = 60;
+            List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
+
+            Rectangle area = new Rectangle(10, 60, 130, 100);
+            if (area.contains(mp)) {
+                int yReq = mp.y - yC;
+                int itemID = yReq / fontRendererObj.FONT_HEIGHT;
+                if (itemID < list.size()) {
+                    drawTexturedModalRect(xStartGUI + xC, yStartGUI + itemID * fontRendererObj.FONT_HEIGHT, 0, 181, 128, fontRendererObj.FONT_HEIGHT);
+                }
+            }
+        }
         if (addButtonEnabled) {
             drawTexturedModalRect(xStartGUI + (int) addButtonRectangle.getX(), yStartGUI + (int) addButtonRectangle.getY(), 208, 128, addButtonRectangle.width, addButtonRectangle.height);
             if (addButtonRectangle.contains(mp))
