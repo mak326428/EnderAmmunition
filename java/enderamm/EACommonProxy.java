@@ -13,6 +13,8 @@ import enderamm.block.TileEntityRockExterminator;
 import enderamm.item.*;
 import enderamm.network.EAPacketHandler;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -40,7 +42,19 @@ public class EACommonProxy {
     public static ItemRFDebug itemRFDebug;
     public static BlockRockExterminator blockRockExterminator;
 
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG;
+
+    static {
+        // check whether or not we're in the dev env
+        boolean debug;
+        try {
+            Block.class.getMethod("setCreativeTab", CreativeTabs.class);
+            debug = true;
+        } catch (Throwable t) {
+            debug = false;
+        }
+        DEBUG = debug;
+    }
 
     public static class RawItemData {
         public final String modId;
@@ -144,7 +158,7 @@ public class EACommonProxy {
         blockRockExterminator = new BlockRockExterminator();
         GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
         GameRegistry.registerTileEntity(TileEntityRockExterminator.class, "enderamm.block.TileEntityRockExterminator");
-        TEProxy.reflect();
+        TEProxy.reflectPost();
         EAInit.addRecipes();
     }
 

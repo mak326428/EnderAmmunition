@@ -1,6 +1,7 @@
 package enderamm;
 
 import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -55,10 +56,16 @@ public class TEProxy {
         bucketPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "bucketPyrotheum");
         tabTETools = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabTools");
         tabTEBlocks = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabBlocks");
-        tesseract = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockTesseract"));
-        resonantEnergyCell = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockCell"), 1, 4);
+        //tesseract = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockTesseract"));
+        //resonantEnergyCell = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockCell"), 1, 4);
         resonantCapacitor = new ItemStack((Item)grabStaticField("thermalexpansion.item.TEItems", "itemCapacitor"), 1, 5);
         dustPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "dustPyrotheum");
+    }
+
+    public static void reflectPost() {
+        // GameRegistry.find[Block/Item]
+        tesseract = new ItemStack(GameRegistry.findBlock("ThermalExpansion", "Tesseract"));
+        resonantEnergyCell = new ItemStack(GameRegistry.findBlock("ThermalExpansion", "Cell"), 1, 4);
     }
 
     public static boolean isEnergyContainerItem(ItemStack stack) {
