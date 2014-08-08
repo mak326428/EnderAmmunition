@@ -96,5 +96,18 @@ public class ItemEnderArrow extends Item {
             target.getTagCompound().setTag(ItemEnderArrow.NBT_TYPES, tl);
             par3List.add(target);
         }
+        // The Mighty Arrow Of Justice
+        ItemStack target = new ItemStack(EACommonProxy.itemEnderArrow);
+        target.setTagCompound(new NBTTagCompound());
+        NBTTagList tl = new NBTTagList();
+        for (IEnderEffect eff : registeredEffects) {
+            NBTTagCompound t = new NBTTagCompound();
+            t.setInteger(ItemEnderArrow.NBT_TYPE,
+                    ItemEnderArrow.registeredEffects.indexOf(eff));
+            tl.appendTag(t);
+        }
+        target.getTagCompound().setTag(ItemEnderArrow.NBT_TYPES, tl);
+        par3List.add(target);
+
     }
 }

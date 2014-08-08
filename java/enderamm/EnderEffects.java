@@ -48,7 +48,7 @@ public class EnderEffects {
                 GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
                         'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
                         new ItemStack(Items.potionitem, 1, 8116), 'G',
-                        new ItemStack(Blocks.glowstone)));
+                        new ItemStack(Items.glowstone_dust)));
             }
         });
         ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -73,7 +73,7 @@ public class EnderEffects {
                 GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
                         'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
                         new ItemStack(Items.skull, 1, 1), 'G', new ItemStack(
-                        Blocks.glowstone)));
+                        Items.glowstone_dust)));
             }
         });
         ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -95,7 +95,7 @@ public class EnderEffects {
                 GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
                         'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
                         new ItemStack(Blocks.quartz_block), 'G',
-                        new ItemStack(Blocks.glowstone)));
+                        new ItemStack(Items.glowstone_dust)));
             }
         });
         ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -118,7 +118,7 @@ public class EnderEffects {
                 GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
                         'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
                         new ItemStack(Items.lava_bucket), 'G', new ItemStack(
-                        Blocks.glowstone)));
+                        Items.glowstone_dust)));
             }
         });
         ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -144,7 +144,7 @@ public class EnderEffects {
                 GameRegistry.addRecipe(new ShapedOreRecipe(target, "AP", "GG",
                         'A', new ItemStack(EACommonProxy.itemEnderArrow), 'P',
                         new ItemStack(Items.ghast_tear), 'G', new ItemStack(
-                        Blocks.glowstone)));
+                        Items.glowstone_dust)));
             }
         });
         ItemEnderArrow.registeredEffects.add(new IEnderEffect() {
@@ -167,7 +167,7 @@ public class EnderEffects {
                             "GG", 'A', new ItemStack(
                             EACommonProxy.itemEnderArrow), 'P',
                             new ItemStack(Blocks.tnt), 'G', new ItemStack(
-                            Blocks.glowstone)));
+                            Items.glowstone_dust)));
                 }
             }
         });
