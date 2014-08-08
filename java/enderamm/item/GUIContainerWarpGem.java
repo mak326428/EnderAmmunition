@@ -157,8 +157,8 @@ public class GUIContainerWarpGem extends GuiContainer {
         }
         this.nameTextBox.drawTextBox();
         if (curSel != null) {
-            fontRendererObj.drawString("Dimension: " + DimensionManager.getProvider(curSel.dimID).getDimensionName(), xStartGUI + 7, yStartGUI + 7, 4210752);
-            fontRendererObj.drawString("X: " + Math.round(curSel.x) + ", Y: " + Math.round(curSel.y) + ", Z: " + Math.round(curSel.z), xStartGUI + 7, yStartGUI + 17, 4210752);
+            fontRendererObj.drawString(EnumChatFormatting.WHITE + "Dimension: " + DimensionManager.getProvider(curSel.dimID).getDimensionName(), xStartGUI + 7, yStartGUI + 7, 4210752);
+            fontRendererObj.drawString(EnumChatFormatting.WHITE + "X: " + Math.round(curSel.x) + ", Y: " + Math.round(curSel.y) + ", Z: " + Math.round(curSel.z), xStartGUI + 7, yStartGUI + 17, 4210752);
         }
         GL11.glEnable(GL11.GL_LIGHTING);
     }
