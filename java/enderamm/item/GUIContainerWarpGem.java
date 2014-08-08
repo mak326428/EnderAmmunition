@@ -4,6 +4,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -74,7 +75,6 @@ public class GUIContainerWarpGem extends GuiContainer {
         }
         // TODO: teleport EXACTLY HERE
         List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
-        int xC = 10;
         int yC = 60;
         Rectangle area = new Rectangle(10, 60, 130, 100);
         if (area.contains(mp)) {
@@ -106,6 +106,15 @@ public class GUIContainerWarpGem extends GuiContainer {
         int yStartGUI = (this.height - this.ySize) / 2;
         Point mp = new Point(x - xStartGUI, y - yStartGUI);
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(GUI_LOCATION);
+        int xC = 10;
+        int yC = 60;
+        if (curSel != null) {
+            xC = 10;
+            yC = 60;
+            int index = ItemWarpGem.getAllPoints(getStack()).indexOf(curSel);
+            yC += index * fontRendererObj.FONT_HEIGHT;
+            drawTexturedModalRect(xStartGUI + xC, yStartGUI + yC, 0, 191, 128, fontRendererObj.FONT_HEIGHT);
+        }
         if (addButtonEnabled) {
             drawTexturedModalRect(xStartGUI + (int) addButtonRectangle.getX(), yStartGUI + (int) addButtonRectangle.getY(), 208, 128, addButtonRectangle.width, addButtonRectangle.height);
             if (addButtonRectangle.contains(mp))
@@ -122,8 +131,7 @@ public class GUIContainerWarpGem extends GuiContainer {
                 drawTexturedModalRect(xStartGUI + (int) teleportButtonRectangle.getX(), yStartGUI + (int) teleportButtonRectangle.getY(), 208, 212, teleportButtonRectangle.width, teleportButtonRectangle.height);
         }
         List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
-        int xC = 10;
-        int yC = 60;
+        xC = 10; yC = 60;
         for (ItemWarpGem.WarpPoint wp : list) {
             fontRendererObj.drawString(wp.name, xStartGUI + xC, yStartGUI + yC, 0xFFFFFF);
             yC += fontRendererObj.FONT_HEIGHT;
