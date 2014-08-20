@@ -179,18 +179,8 @@ public class GUIContainerWarpGem extends GuiContainer {
         int yStartGUI = (this.height - this.ySize) / 2;
         Point mp = new Point(x - xStartGUI, y - yStartGUI);
         FMLClientHandler.instance().getClient().renderEngine.bindTexture(GUI_LOCATION);
-        int xC = 10;
-        int yC = 60;
-        if (curSel != null) {
-            xC = 10;
-            yC = 60;
-            int index = ItemWarpGem.getAllPoints(getStack()).indexOf(curSel) + 1;
-            yC += index * fontRendererObj.FONT_HEIGHT;
-            drawTexturedModalRect(xStartGUI + xC, yStartGUI + yC, 0, 191, 128, fontRendererObj.FONT_HEIGHT);
-        }
-
-        xC = 10;
-        yC = 60;
+        int xC = 8;
+        int yC = 58;
         List<ItemWarpGem.WarpPoint> list = ItemWarpGem.getAllPoints(getStack());
 
         Rectangle area = new Rectangle(10, 60, 130, 100);
@@ -200,6 +190,20 @@ public class GUIContainerWarpGem extends GuiContainer {
             if (itemID < list.size()) {
                 drawTexturedModalRect(xStartGUI + xC, yStartGUI + yC + itemID * fontRendererObj.FONT_HEIGHT, 0, 181, 128, fontRendererObj.FONT_HEIGHT);
             }
+        }
+        xC = 8;
+        yC = 58;
+        if (curSel != null) {
+            int index = 0;
+            for (int i = 0; i < list.size(); i++) {
+                ItemWarpGem.WarpPoint wp = list.get(i);
+                if (wp.name.equalsIgnoreCase(curSel.name)) {
+                    index = i;
+                    break;
+                }
+            }
+            yC += index * fontRendererObj.FONT_HEIGHT;
+            drawTexturedModalRect(xStartGUI + xC, yStartGUI + yC, 0, 191, 128, fontRendererObj.FONT_HEIGHT);
         }
 
         if (addButtonEnabled) {
