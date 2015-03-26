@@ -2,7 +2,7 @@ package enderamm;
 
 import enderamm.network.EAPacketHandler;
 import enderamm.network.PacketRenderDebug;
-import mm.EntityCruiseMissile;
+//import mm.EntityCruiseMissile;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
