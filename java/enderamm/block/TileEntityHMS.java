@@ -4,6 +4,7 @@ import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyHandler;
 import enderamm.EACommonProxy;
 import enderamm.TEProxy;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,8 +23,8 @@ public class TileEntityHMS extends TileEntity implements ISidedInventory,
     public FluidTank enderTank = new FluidTank(10000);
 
     public static final int FLUID_COST = 1000;
-    public static final int RF_PER_TICK = 7500;
-    public static final int OPERATION_TICKS = 90;
+    public static final int RF_PER_TICK = 10000;
+    public static final int OPERATION_TICKS = 100;
 
     public ItemStack[] inv;
     public EnergyStorage storage;
@@ -191,7 +192,7 @@ public class TileEntityHMS extends TileEntity implements ISidedInventory,
 
             progress = 0;
         }
-        progressGauged = Math.round((float) progress / OPERATION_TICKS * 22);
+        progressGauged = Math.round((float) progress / OPERATION_TICKS * 100);
     }
 
     @Override

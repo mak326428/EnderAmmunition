@@ -55,6 +55,18 @@ public class ItemWarpGem extends ItemBasicRF {
         public double yaw;
         public double pitch;
         public String name;
+
+        public static WarpPoint createDummy(String name) {
+            WarpPoint wp = new WarpPoint();
+            wp.x = 0;
+            wp.y = 0;
+            wp.z = 0;
+            wp.dimID = 0;
+            wp.yaw = 0;
+            wp.pitch = 0;
+            wp.name = name;
+            return wp;
+        }
     }
 
     public ItemWarpGem() {

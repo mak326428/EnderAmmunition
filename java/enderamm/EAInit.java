@@ -140,10 +140,10 @@ public class EAInit {
 				EACommonProxy.itemArmorEnderBoots), "#C#", "# #", '#',
 				new ItemStack(EACommonProxy.itemMaterial, 1, 1), 'C',
 				energyCapacitor));
-		GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
-				EACommonProxy.itemEnderMagnet), "EPE", "PRP", "EPE", 'E',
-				new ItemStack(EACommonProxy.itemMaterial, 1, 1), 'R',
-				energyCapacitor, 'P', new ItemStack(Items.ender_pearl)));
+		//GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
+		//		EACommonProxy.itemEnderMagnet), "EPE", "PRP", "EPE", 'E',
+		//		new ItemStack(EACommonProxy.itemMaterial, 1, 1), 'R',
+		//		energyCapacitor, 'P', new ItemStack(Items.ender_pearl)));
 		//GameRegistry.addRecipe(new ShapedRFRecipe(new ItemStack(
 		// EACommonProxy.itemMaterial, 1, 3), " # ", " # ", '#',
 		// new ItemStack(EACommonProxy.itemMaterial, 1, 1)));
@@ -155,13 +155,13 @@ public class EAInit {
 				new ItemStack(EACommonProxy.itemMaterial, 1, 1), 'E',
 				new ItemStack(Items.ender_pearl), 'R', TEProxy.resonantEnergyCell));
 		// Annihilation Manipulator Recipe
-		GameRegistry.addRecipe(new ShapedRFRecipe(ItemAnnihilationManipulator
-				.getAnnihilationManipulator(0), "LJL", "IWI", "IRI", 'L',
-				new ItemStack(EACommonProxy.itemMaterial, 1, 2), 'W',
-				new ItemStack(EACommonProxy.itemWarpGem), 'I', new ItemStack(
-						EACommonProxy.itemMaterial, 1, 1), 'R',
-				energyCapacitor, 'J', new ItemStack(
-						EACommonProxy.itemMaterial, 1, 3)));
+		//GameRegistry.addRecipe(new ShapedRFRecipe(ItemAnnihilationManipulator
+		//		.getAnnihilationManipulator(0), "LJL", "IWI", "IRI", 'L',
+		//		new ItemStack(EACommonProxy.itemMaterial, 1, 2), 'W',
+		//		new ItemStack(EACommonProxy.itemWarpGem), 'I', new ItemStack(
+		//				EACommonProxy.itemMaterial, 1, 1), 'R',
+		//		energyCapacitor, 'J', new ItemStack(
+		//				EACommonProxy.itemMaterial, 1, 3)));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(
 				EACommonProxy.itemMaterial, 1, 3), "ETE", "COC", "ERE",
 				'O', TEProxy.tesseract, 'R', TEProxy.tesseract, 'T',

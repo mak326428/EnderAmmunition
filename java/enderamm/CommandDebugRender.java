@@ -2,6 +2,7 @@ package enderamm;
 
 import enderamm.network.EAPacketHandler;
 import enderamm.network.PacketRenderDebug;
+import mm.EntityCruiseMissile;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -28,9 +29,15 @@ public class CommandDebugRender extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender icommandsender, String[] astring) {
-        if (astring.length % 3 != 0) throw new WrongUsageException("Wrong amount of arguments");
+        //if (astring.length % 3 != 0) throw new WrongUsageException("Wrong amount of arguments");
         double translateX = 0.0D, translateY = 0.0D, translateZ = 0.0D, scaleX = 0.0D, scaleY = 0.0D, scaleZ = 0.0D, rotateX = 0.0D, rotateY = 0.0D, rotateZ = 0.0D;
         try {
+            //EntityCruiseMissile.rY = Float.parseFloat(astring[0]);
+           // EntityCruiseMissile.rP = Float.parseFloat(astring[1]);
+            EntityCruiseMissile.dX = Double.parseDouble(astring[0]);
+            EntityCruiseMissile.dY = Double.parseDouble(astring[1]);
+            EntityCruiseMissile.dZ = Double.parseDouble(astring[2]);
+
             if (astring.length >= 1) {
                 translateX = Double.parseDouble(astring[0]);
                 translateY = Double.parseDouble(astring[1]);

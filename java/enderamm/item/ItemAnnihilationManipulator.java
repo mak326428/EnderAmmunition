@@ -313,7 +313,7 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
         return stack.getItemDamage() != OreDictionary.WILDCARD_VALUE;
     }
 
-    public static ItemStack getAnnihilationManipulator(int energy) {
+    /*public static ItemStack getAnnihilationManipulator(int energy) {
         ItemStack result = new ItemStack(
                 EACommonProxy.itemAnnihilationManipulator, 1, 0);
         result.stackTagCompound = new NBTTagCompound();
@@ -321,14 +321,14 @@ public class ItemAnnihilationManipulator extends ItemPickaxe implements
         // result.addEnchantment(Enchantment.looting, 3);
         // result.addEnchantment(Enchantment.fortune, 3);
         return result;
-    }
+    }*/
 
     @SideOnly(Side.CLIENT)
     @Override
     public void getSubItems(Item par1, CreativeTabs par2CreativeTabs,
                             List par3List) {
-        par3List.add(getAnnihilationManipulator(MAX_STORAGE));
-        par3List.add(getAnnihilationManipulator(0));
+        //par3List.add(getAnnihilationManipulator(MAX_STORAGE));
+        //par3List.add(getAnnihilationManipulator(0));
     }
 
     @Override

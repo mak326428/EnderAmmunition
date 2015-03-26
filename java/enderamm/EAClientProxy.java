@@ -59,8 +59,8 @@ public class EAClientProxy extends EACommonProxy {
                 EACommonProxy.blockHMS), new ItemRendererHMS());
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityRockExterminator.class,
                 new RockExterminatorTESR());
-        MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(
-                EACommonProxy.blockRockExterminator), new ItemRendererRockExterminator());
+        //MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(
+        //        EACommonProxy.blockRockExterminator), new ItemRendererRockExterminator());
         MinecraftForgeClient.registerItemRenderer(EACommonProxy.itemWarpGem, new ItemRendererWarpGem());
 
     }

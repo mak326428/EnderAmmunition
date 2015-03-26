@@ -455,33 +455,6 @@ public class ItemArmorEnderBase extends ItemArmor implements ISpecialArmor,
     public boolean allowsFlight(ItemStack is, EntityPlayer ep) {
         return armorType == 1 && ensureFullSet(ep, ENERGY_PER_TICK_FLYING);
     }
-    // TODO: uncomment when things get extra-crazy
-    /*public static List<String> blackList = Lists.newArrayList();
-	static {
-		blackList.add("rascher");
-		blackList.add("sergeyvol");
-		blackList.add("engineer");
-		blackList.add("sybershot");
-	}*/
-
-    @SubscribeEvent
-    public void onEntityHurt(LivingHurtEvent lhe) {
-        World w = lhe.entityLiving.worldObj;
-        if (w.isRemote)
-            return;
-        if (!(lhe.entityLiving instanceof EntityPlayer))
-            return;
-        EntityPlayer player = (EntityPlayer) lhe.entityLiving;
-        //if (blackList.contains(player.username.toLowerCase()))
-        //	player.attackEntityFrom(lhe.source, lhe.ammount * 2);
-        int energyReq = (int) (lhe.ammount * getEnergyPerDamage());
-        if (ensureFullSet(player, energyReq)) {
-            lhe.setCanceled(true);
-            for (ItemStack is : player.inventory.armorInventory)
-                extractEnergy(is, energyReq, false);
-            //player.attackTime = 100;
-        }
-    }
 
     @SideOnly(Side.CLIENT)
     @Override

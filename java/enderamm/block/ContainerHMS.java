@@ -15,7 +15,7 @@ public class ContainerHMS extends Container {
 
     public ContainerHMS(InventoryPlayer inventoryPlayer, TileEntityHMS te) {
         this.tileEntity = te;
-        this.addSlotToContainer(new EASlot(this.tileEntity, 0, 118, 29));
+        this.addSlotToContainer(new EASlot(this.tileEntity, 0, 118, 8));
         this.bindPlayerInventory(inventoryPlayer);
     }
 

@@ -107,9 +107,12 @@ public class GUIContainerHMS extends GuiContainer {
         this.drawTexturedModalRect(x + 6, y + 22 + 42 - energyGauged, 176, 80 + 42 - energyGauged,
                 14, energyGauged);
         int progress = tileEntity.progressGauged;
-        this.drawTexturedModalRect(x + 92, y + 29, 226, 40, progress, 15);
-        this.drawTexturedModalRect(x + 118, y + 50 + 22 - progress, 226, 10 + 22 - progress,
-                22, progress);
-        this.drawTexturedModalRect(x + 138 + 22 - progress, y + 29, 226 + 22 - progress, 60, progress, 15);
+        //this.drawTexturedModalRect(x + 92, y + 29, 226, 40, progress, 15);
+        //this.drawTexturedModalRect(x + 118, y + 50 + 22 - progress, 226, 10 + 22 - progress,
+        //        22, progress);
+        //this.drawTexturedModalRect(x + 138 + 22 - progress, y + 29, 226 + 22 - progress, 60, progress, 15);
+        this.fontRendererObj.drawString("Progress: ", x + 100, y + 35, 4210752);
+        this.fontRendererObj.drawString(progress + "%", x + 100, y + 35 + 10, 4210752);
+
     }
 }

@@ -14,6 +14,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -196,7 +197,7 @@ public class ItemEnderMagnet extends Item implements IEnergyContainerItem {
     }
 
     public static ItemStack getMagnet(int energy) {
-        ItemStack result = new ItemStack(EACommonProxy.itemEnderMagnet,
+        ItemStack result = new ItemStack(Items.cake, // don't ask me why cake. Cake.
                 1, 0);
         result.stackTagCompound = new NBTTagCompound();
         result.stackTagCompound.setInteger("Energy", energy);

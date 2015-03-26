@@ -33,14 +33,14 @@ public class EACommonProxy {
     public static ItemArmorEnderBase itemArmorEnderChestplate;
     public static ItemWarpGem itemWarpGem;
     public static EAItemMaterial itemMaterial;
-    public static ItemAnnihilationManipulator itemAnnihilationManipulator;
+    //public static ItemAnnihilationManipulator itemAnnihilationManipulator;
     public static ItemHealingGem itemHealingGem;
-    public static ItemEnderMagnet itemEnderMagnet;
+    //public static ItemEnderMagnet itemEnderMagnet;
     public static ItemEnderBow itemEnderBow;
     public static ItemEnderArrow itemEnderArrow;
     public static BlockHMS blockHMS;
-    public static ItemRFDebug itemRFDebug;
-    public static BlockRockExterminator blockRockExterminator;
+    //public static ItemRFDebug itemRFDebug;
+    //public static BlockRockExterminator blockRockExterminator;
 
     public static final boolean DEBUG;
 
@@ -139,24 +139,24 @@ public class EACommonProxy {
         GameRegistry.registerItem(itemMaterial, "item_material");
         itemWarpGem = new ItemWarpGem();
         GameRegistry.registerItem(itemWarpGem, "tool_warp_gem");
-        itemAnnihilationManipulator = new ItemAnnihilationManipulator();
-        GameRegistry.registerItem(itemAnnihilationManipulator,
-                "tool_fastbreaker");
-        itemRFDebug = new ItemRFDebug();
-        GameRegistry.registerItem(itemRFDebug, "tool_rf_debug");
+        //itemAnnihilationManipulator = new ItemAnnihilationManipulator();
+        //GameRegistry.registerItem(itemAnnihilationManipulator,
+       //         "tool_fastbreaker");
+        //itemRFDebug = new ItemRFDebug();
+        //GameRegistry.registerItem(itemRFDebug, "tool_rf_debug");
         itemHealingGem = new ItemHealingGem();
         GameRegistry.registerItem(itemHealingGem, "tool_healing_gem");
         itemEnderArrow = new ItemEnderArrow();
         GameRegistry.registerItem(itemEnderArrow, "item_ender_arrow");
         itemEnderBow = new ItemEnderBow();
         GameRegistry.registerItem(itemEnderBow, "tool_ender_bow");
-        itemEnderMagnet = new ItemEnderMagnet();
-        GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
+        //itemEnderMagnet = new ItemEnderMagnet();
+        //GameRegistry.registerItem(itemEnderMagnet, "tool_ender_magnet");
         blockHMS = new BlockHMS();
         GameRegistry.registerBlock(blockHMS, "block_hms");
         GameRegistry.registerTileEntity(TileEntityHMS.class, "enderamm.block.TileEntityHMS");
-        blockRockExterminator = new BlockRockExterminator();
-        GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
+       // blockRockExterminator = new BlockRockExterminator();
+        //GameRegistry.registerBlock(blockRockExterminator, "rock_exterminator");
         GameRegistry.registerTileEntity(TileEntityRockExterminator.class, "enderamm.block.TileEntityRockExterminator");
 
     }
