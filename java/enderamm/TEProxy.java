@@ -49,17 +49,17 @@ public class TEProxy {
      * Grab items & other stuff from TE
      */
     public static void reflect() {
-        fluidRedstone = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidRedstone");
-        fluidEnder = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidEnder");
-        fluidGlowstone = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidGlowstone");
-        fluidPyrotheum = (Fluid)grabStaticField("thermalfoundation.fluid.TFFluids", "fluidPyrotheum");
-        bucketPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "bucketPyrotheum");
-        tabTETools = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabTools");
-        tabTEBlocks = (CreativeTabs)grabStaticField("thermalexpansion.ThermalExpansion", "tabBlocks");
+        fluidRedstone = (Fluid)grabStaticField("cofh.thermalfoundation.fluid.TFFluids", "fluidRedstone");
+        fluidEnder = (Fluid)grabStaticField("cofh.thermalfoundation.fluid.TFFluids", "fluidEnder");
+        fluidGlowstone = (Fluid)grabStaticField("cofh.thermalfoundation.fluid.TFFluids", "fluidGlowstone");
+        fluidPyrotheum = (Fluid)grabStaticField("cofh.thermalfoundation.fluid.TFFluids", "fluidPyrotheum");
+        bucketPyrotheum = (ItemStack)grabStaticField("cofh.thermalfoundation.item.TFItems", "bucketPyrotheum");
+        tabTETools = (CreativeTabs)grabStaticField("cofh.thermalexpansion.ThermalExpansion", "tabTools");
+        tabTEBlocks = (CreativeTabs)grabStaticField("cofh.thermalexpansion.ThermalExpansion", "tabBlocks");
         //tesseract = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockTesseract"));
         //resonantEnergyCell = new ItemStack((Block)grabStaticField("thermalexpansion.block.TEBlocks", "blockCell"), 1, 4);
-        resonantCapacitor = new ItemStack((Item)grabStaticField("thermalexpansion.item.TEItems", "itemCapacitor"), 1, 5);
-        dustPyrotheum = (ItemStack)grabStaticField("thermalfoundation.item.TFItems", "dustPyrotheum");
+        resonantCapacitor = new ItemStack((Item)grabStaticField("cofh.thermalexpansion.item.TEItems", "itemCapacitor"), 1, 5);
+        dustPyrotheum = (ItemStack)grabStaticField("cofh.thermalfoundation.item.TFItems", "dustPyrotheum");
     }
 
     public static void reflectPost() {
