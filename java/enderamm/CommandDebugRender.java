@@ -34,9 +34,9 @@ public class CommandDebugRender extends CommandBase {
         try {
             //EntityCruiseMissile.rY = Float.parseFloat(astring[0]);
            // EntityCruiseMissile.rP = Float.parseFloat(astring[1]);
-            EntityCruiseMissile.dX = Double.parseDouble(astring[0]);
-            EntityCruiseMissile.dY = Double.parseDouble(astring[1]);
-            EntityCruiseMissile.dZ = Double.parseDouble(astring[2]);
+            //EntityCruiseMissile.dX = Double.parseDouble(astring[0]);
+           // EntityCruiseMissile.dY = Double.parseDouble(astring[1]);
+           // EntityCruiseMissile.dZ = Double.parseDouble(astring[2]);
 
             if (astring.length >= 1) {
                 translateX = Double.parseDouble(astring[0]);
