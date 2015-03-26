@@ -96,7 +96,7 @@ public class EAInit {
 
     public static void addTransposerFillRecipe(int paramInt, ItemStack paramItemStack1, ItemStack paramItemStack2, FluidStack paramFluidStack, boolean paramBoolean) {
         try {
-            Class<?> cls = Class.forName("thermalexpansion.util.crafting.TransposerManager");
+            Class<?> cls = Class.forName("cofh.thermalexpansion.util.crafting.TransposerManager");
             Method m = cls.getMethod("addFillRecipe", int.class, ItemStack.class, ItemStack.class, FluidStack.class, boolean.class);
             m.invoke(null, paramInt, paramItemStack1, paramItemStack2, paramFluidStack, paramBoolean);
         } catch (Throwable t) {
